@@ -30,11 +30,12 @@ router.post('/', (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    //console.log('tttttttttttttt',req.body);
+    console.log('tttttttttttttt',req.body);
 
 
     const product = new Product({
         name: req.body.name,
+        price: req.body.price,
         description: req.body.description,
         category: req.body.category,
     });
