@@ -1,36 +1,37 @@
-import {Col, Container, Button, Row, Table} from "react-bootstrap";
+import {Col, Container, Form, Modal, Button, Row, Table} from "react-bootstrap";
 import Swal from 'sweetalert2'
-import React, {useState, useEffect} from "react";
-import ModalComp from '../../components/stock/Modal';
+import React, {useState, useRef, useEffect} from "react";
+import ModalComp from '../../components/customer/Modal';
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
-const hostApi = host+'/stock/';
+const hostApi = host+'/customer/';
 
 
-export default function Stock() {
+
+export default function Customer() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
     const [show, setShow] = useState(false);
-    const [stocks, setStocks] = useState([]);
-    const [stock, setStock] = useState('');
+    const [customers, setcustomers] = useState([]);
+    const [customer, setCustomer] = useState('');
 
     useEffect(()=>{
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setStocks(data);
+                setcustomers(data);
             });
     }, []);
 
-    const updateStockList = () => {
+    const updateCustomerList = () => {
 
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setStocks(data);
+                setcustomers(data);
             });
 
     }
@@ -38,12 +39,12 @@ export default function Stock() {
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (stock = {}) => {
+    const handleShow = (customer = {}) => {
         setShow(true)
-        setStock(stock)
+        setCustomer(customer)
     };
 
-    const handleDeleteStock = (stock_id) => {
+    const handleDeleteCustomer = (customer_id) => {
 
         Swal.fire({
             title: 'Are you sure?',
@@ -56,14 +57,14 @@ export default function Stock() {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(hostApi+stock_id, {
+                fetch(hostApi+customer_id, {
                     method: 'DELETE'
                 })
-                    .then(res => res.json()) // or res.json()
-                    .then(res => {
-                        console.log(res)
-                        updateStockList();
-                    });
+                .then(res => res.json()) // or res.json()
+                .then(res => {
+                    console.log(res)
+                    updateCustomerList();
+                });
 
                 Swal.fire(
                     'Deleted!',
@@ -81,13 +82,13 @@ export default function Stock() {
 
     return (
         <>
-            <ModalComp modalShowOrNot={show} handleClose={handleClose} stockData={stock} updateStockList={updateStockList}/>
+            <ModalComp modalShowOrNot={show} handleClose={handleClose} customerData={customer} updateCustomerList={updateCustomerList}/>
 
             <Container>
                 <Row>
                     <Col>
-                        <h1>Stock</h1>
-                        <p>This is the stock page.</p>
+                        <h1>Customer</h1>
+                        <p>This is the customer page.</p>
                     </Col>
                 </Row>
 
@@ -98,7 +99,7 @@ export default function Stock() {
                                 <header className="card-header"><h6 className="title">Action</h6></header>
                                 <div className="filter-content">
                                     <div className="list-group list-group-flush">
-                                        <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create stock </span>
+                                        <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create customer </span>
 
                                     </div>
                                     {/*list-group .*/}
@@ -116,7 +117,7 @@ export default function Stock() {
 
                             <article className="card-group-item">
 
-                                <header className="card-header"><h6 className="title">Stock List</h6></header>
+                                <header className="card-header"><h6 className="title">Customer List</h6></header>
 
                                 <div className="filter-content">
 
@@ -128,34 +129,32 @@ export default function Stock() {
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>PurchaseName</th>
-                                                <th>Product</th>
+                                                <th>Name</th>
                                                 <th>Price</th>
-                                                <th>Quantity</th>
+                                                <th>Category</th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
 
-                                            {stocks.map(stock=>{
+                                            {customers.map(customer=>{
                                                 return (
-                                                    <tr key={stock._id}>
+                                                    <tr key={customer._id}>
                                                         <td>0</td>
-                                                        <td>{stock.name}</td>
-                                                        <td>{stock.product.name}</td>
+                                                        <td>{customer.name}</td>
 
-                                                        <td>{stock.unitPrice}</td>
-                                                        <td>{stock.quantityPurchased ? <span className="text-danger">({stock.quantityPurchased})</span>: ''}</td>
+                                                        <td>{customer.price}</td>
+                                                        <td>{customer.category ? <span className="text-danger">({customer.category.name})</span>: ''}</td>
 
                                                         <td>
                                                         <span className="">
 
                                                             <Button variant={"success"} className="mx-1" onClick={()=>{
-                                                                handleShow(stock)
+                                                                handleShow(customer)
                                                             }}>Edit</Button>
 
                                                             <Button variant={"danger"} onClick={()=>{
-                                                                handleDeleteStock(stock._id)
+                                                                handleDeleteCustomer(customer._id)
                                                             }}>Delete</Button>
                                                         </span>
                                                         </td>

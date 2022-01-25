@@ -1,16 +1,21 @@
 const mongoose = require('mongoose');
 
 
-const ProductSchema = mongoose.Schema({
+const CustomerSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-    price: {
-        type: Number,
-        required: true
+    address: {
+        type: String
     },
     picture: {
+        type: String,
+    },
+    phone: {
+        type: String,
+    },
+    email: {
         type: String,
     },
     status: {
@@ -19,10 +24,6 @@ const ProductSchema = mongoose.Schema({
         required: true,
         default: 'active'
     },
-    category: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Category"
-    },
     description: {
         type: String,
     }
@@ -30,4 +31,4 @@ const ProductSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = mongoose.model('Customer', CustomerSchema);

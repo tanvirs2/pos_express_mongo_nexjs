@@ -6,6 +6,7 @@ const categoriesRoute = require('./routes/categories');
 const productsRoute = require('./routes/products');
 const stockRoute = require('./routes/stock');
 const sellRoute = require('./routes/sell');
+const customerRoute = require('./routes/customer');
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -25,6 +26,7 @@ app.prepare().then(() => {
     prefixApiRoute('/products', productsRoute);
     prefixApiRoute('/stock', stockRoute);
     prefixApiRoute('/sell', sellRoute);
+    prefixApiRoute('/customer', customerRoute);
     /*routes*/
 
     server.get('/api22', (req, res) => {

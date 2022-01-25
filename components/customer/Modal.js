@@ -3,34 +3,30 @@ import Swal from "sweetalert2";
 import {Button, Form, Modal} from "react-bootstrap";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
-const hostApi = host+'/stock/';
-const belongProductsHostApi = host+'/products/';
+const hostApi = host+'/customer/';
+const belongCategoriesHostApi = host+'/categories/';
 
 export default function ModalComp(props) {
 
-    const [stock, setStock] = useState('');
-    const [products, setProducts] = useState([]);
+    const [customer, setCustomer] = useState('');
+    const [categories, setCategories] = useState([]);
     let form = useRef(null);
 
     useEffect(() => {
 
         //form.current.name.value = 'ddd'
-        console.log('before', form.current);
+        //console.log(form.current);
 
-        fetch(belongProductsHostApi)
+        fetch(belongCategoriesHostApi)
             .then(response=>response.json())
-            .then(products=>{
+            .then(categories=>{
                 //console.log(data);
-                setProducts(products); // get Products for Products select option
+                setCategories(categories); // get Categories for Categories select option
             });
 
-        setStock(props.stockData);
+        setCustomer(props.customerData);
 
-        return () => {
-            console.log('after', form.current);
-        }
-
-    }, [stock]);
+    }, [customer]);
 
     const handleClose = () => {
         props.handleClose();
@@ -40,17 +36,17 @@ export default function ModalComp(props) {
     const handleSubmitData = async (event) => {
         //alert('dsa');
 
-        //setStock([]);
+        //setCustomer([]);
+        //console.log(form.current.name.value)
 
         event.preventDefault()
 
         const res = await fetch(hostApi, {
             body: JSON.stringify({
                 name: form.current.name.value,
+                price: form.current.price.value,
                 description: form.current.description.value,
-                quantityPurchased: form.current.quantityPurchased.value,
-                unitPrice: form.current.unitPrice.value,
-                product: form.current.product.value,
+                category: form.current.category.value,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -60,7 +56,9 @@ export default function ModalComp(props) {
 
         const result = await res.json()
 
-        props.updateStockList();
+        console.log('tncccccccccc', form.current.price.value)
+
+        props.updateCustomerList();
         handleClose()
 
         Swal.fire({
@@ -79,14 +77,12 @@ export default function ModalComp(props) {
 
         event.preventDefault()
 
-        console.log(props.stockData._id);
+        console.log(props.customerData._id);
 
-        const res = await fetch(hostApi+props.stockData._id, {
+        const res = await fetch(hostApi+props.customerData._id, {
             body: JSON.stringify({
                 name: form.current.name.value,
                 description: form.current.description.value,
-                quantityPurchased: form.current.quantityPurchased.value,
-                unitPrice: form.current.unitPrice.value,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -97,7 +93,7 @@ export default function ModalComp(props) {
         const result = await res.json()
 
         handleClose()
-        props.updateStockList();
+        props.updateCustomerList();
 
         Swal.fire({
             position: 'top-end',
@@ -121,45 +117,38 @@ export default function ModalComp(props) {
                    centered
                    onShow={()=>{
                        //console.log(form.current);
-                       form.current.name.value = (props.stockData.name) ? props.stockData.name : '';
-                       form.current.description.value = (props.stockData.description) ? props.stockData.description : '';
-                       form.current.quantityPurchased.value = (props.stockData.quantityPurchased) ? props.stockData.quantityPurchased : '';
-                       form.current.unitPrice.value = (props.stockData.unitPrice) ? props.stockData.unitPrice : '';
+                       form.current.name.value = (props.customerData.name) ? props.customerData.name : '';
+                       form.current.description.value = (props.customerData.description) ? props.customerData.description : '';
 
                    }}
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Create stock</Modal.Title>
+                    <Modal.Title>Create customer</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
 
                     <Form ref={form}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Stock Name</Form.Label>
-                            <Form.Control type="text" placeholder="Type stock" name="name"/>
+                            <Form.Label>Customer Name</Form.Label>
+                            <Form.Control type="text" placeholder="Type customer" name="name"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
+                            <Form.Label>Customer Price</Form.Label>
+                            <Form.Control type="text" placeholder="Type Price" name="price"/>
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
-                        </Form.Group>
+                        <br/>
 
-
-                        <Form.Label>Product</Form.Label>
-                        <Form.Select aria-label="Default select example" name="product">
+                        <Form.Select aria-label="Default select example" name="category">
                             <option>Open this select menu</option>
 
                             {
-                                products.map(product=>{
+                                categories.map(category=>{
                                     return (
-                                        <option key={product._id} value={product._id}>{product.name}</option>
+                                        <option key={category._id} value={category._id}>{category.name}</option>
                                     )
                                 })
                             }
@@ -168,7 +157,7 @@ export default function ModalComp(props) {
 
                         <br/>
 
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
                             <Form.Label>Description</Form.Label>
                             <Form.Control as="textarea" rows={3} name="description"/>
                         </Form.Group>
@@ -180,10 +169,10 @@ export default function ModalComp(props) {
                         Close
                     </Button>
                     {
-                        props.stockData._id ? <Button variant="warning" onClick={handleUpdateData}>
-                            Update stock
+                        props.customerData._id ? <Button variant="warning" onClick={handleUpdateData}>
+                            Update customer
                         </Button> : <Button variant="primary" onClick={handleSubmitData}>
-                            Save stock
+                            Save customer
                         </Button>
                     }
 

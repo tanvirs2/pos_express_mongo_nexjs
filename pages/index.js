@@ -41,6 +41,12 @@ export default function Home() {
               <BigMenu compData={{name:"Sell", link: "/sell"}}/>
 
             </Col>
+
+            <Col className="mb-4 offset-md-3 offset-xl-0">
+
+              <BigMenu compData={{name:"Customer", link: "/customer"}}/>
+
+            </Col>
           </Row>
         </Container>
 

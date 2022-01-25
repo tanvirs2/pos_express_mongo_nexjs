@@ -34,6 +34,8 @@ router.post('/', (req, res)=>{
     const stock = new Stock({
         name: req.body.name,
         description: req.body.description,
+        quantityPurchased: req.body.quantityPurchased,
+        unitPrice: req.body.unitPrice,
         product: req.body.product,
     });
 
