@@ -15,7 +15,7 @@ import Link from "next/link";
 export default function Navigation() {
   return (
     <header>
-      <Container>
+      <Container fluid>
         <Navbar variant="light" expand="md">
           <Navbar.Brand className="pt-3">
             <Link href="/">
