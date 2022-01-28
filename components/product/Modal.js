@@ -142,6 +142,7 @@ export default function ModalComp(props) {
 
                         <br/>
 
+                        <Form.Label>Category</Form.Label>
                         <Form.Select aria-label="Default select example" name="category">
                             <option>Open this select menu</option>
 

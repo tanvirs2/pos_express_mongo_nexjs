@@ -128,9 +128,9 @@ export default function Stock() {
                                             <thead>
                                             <tr>
                                                 <th>#</th>
-                                                <th>PurchaseName</th>
+                                                <th>PurchaseFrom</th>
                                                 <th>Product</th>
-                                                <th>Price</th>
+                                                <th>UnPrice</th>
                                                 <th>Quantity</th>
                                                 <th>Action</th>
                                             </tr>

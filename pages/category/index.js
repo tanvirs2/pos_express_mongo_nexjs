@@ -15,6 +15,26 @@ export default function Category() {
     const [categories, setCategories] = useState([]);
     const [category, setCategory] = useState('');
 
+    useEffect(()=>{
+        fetch(hostApi)
+            .then(response=>response.json())
+            .then(data=>{
+                console.log(data);
+                setCategories(data);
+            });
+    }, [])
+
+    const updateCategoryList = () => {
+
+        fetch(hostApi)
+            .then(response=>response.json())
+            .then(data=>{
+                console.log(data);
+                setCategories(data);
+            });
+
+    }
+
     const handleClose = () => setShow(false);
 
     const handleShow = (category = {}) => {
@@ -39,7 +59,10 @@ export default function Category() {
                     method: 'DELETE'
                 })
                 .then(res => res.json()) // or res.json()
-                .then(res => console.log(res));
+                .then(res => {
+                    console.log(res)
+                    updateCategoryList();
+                });
 
                 Swal.fire(
                     'Deleted!',
@@ -69,17 +92,12 @@ export default function Category() {
     };
 
 
-    fetch(hostApi)
-        .then(response=>response.json())
-        .then(data=>{
-            //console.log(data);
-            setCategories(data);
-        });
+
 
 
     return (
         <>
-            <ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={category} />
+            <ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={category} updateCategoryList={updateCategoryList}/>
 
             <Container>
                 <Row>

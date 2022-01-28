@@ -22,7 +22,7 @@ const StockSchema = mongoose.Schema({
         type: Number,
         required: false
     },
-    unitPrice: {
+    unitPrice: { // actual/buying price
         type: Number,
         required: false
     },

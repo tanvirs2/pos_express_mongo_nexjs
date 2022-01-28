@@ -41,6 +41,7 @@ export default function ModalComp(props) {
 
         const result = await res.json()
 
+        props.updateCategoryList();
         handleClose()
 
         Swal.fire({
@@ -74,6 +75,7 @@ export default function ModalComp(props) {
 
         const result = await res.json()
 
+        props.updateCategoryList();
         handleClose()
 
         Swal.fire({

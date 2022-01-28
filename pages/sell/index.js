@@ -1,23 +1,64 @@
-import {Col, Container, Form, Modal, Button, Row} from "react-bootstrap";
+import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge} from "react-bootstrap";
 import Swal from 'sweetalert2'
 import Link from "next/link";
 import React, {useState, useRef, useEffect} from "react";
 
+import appLanguage from '../../utilities/language'
+
 import ModalComp from '../../components/sell/Modal';
 
-const hostApi = process.env.NEXT_PUBLIC_HOSTNAME+'/sell/';
+const host = process.env.NEXT_PUBLIC_HOSTNAME;
+const hostApi = host+'/sell/';
+const hostApiStock = host+'/stock/';
+
+const selectedLanguage = process.env.NEXT_PUBLIC_APP_LANGUAGE;
 
 
 
-
+function ProductThumbnail(){
+    return (
+        <div className="card m-2" style={{width: "18rem"}}>
+            <img className="card-img-top" src="/logo-ipsum.png" alt="Card image cap"/>
+            <div className="card-body">
+                <h5 className="card-title">Card title</h5>
+                <p className="card-text">Some quick example text to build on the
+                    card title and make up the bulk of the card's content.</p>
+                <a href="#" className="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    );
+};
 
 export default function Sell() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
+
+
     const [show, setShow] = useState(false);
-    const [categories, setCategories] = useState([]);
+    const [sells, setSells] = useState([]);
+    const [stocks, setStocks] = useState([]);
     const [sell, setSell] = useState('');
+
+    let moduleLang = appLanguage[selectedLanguage].sellModule;
+
+    useEffect(()=>{
+        fetch(hostApi)
+            .then(response=>response.json())
+            .then(data=>{
+                console.log(data);
+                setSells(data);
+            });
+
+        fetch(hostApiStock)
+            .then(response=>response.json())
+            .then(data=>{
+                console.log(data);
+                setStocks(data);
+            });
+
+
+    }, []);
 
     const handleClose = () => setShow(false);
 
@@ -73,12 +114,7 @@ export default function Sell() {
     };
 
 
-    fetch(hostApi)
-        .then(response=>response.json())
-        .then(data=>{
-            //console.log(data);
-            setCategories(data);
-        });
+
 
 
     return (
@@ -88,8 +124,8 @@ export default function Sell() {
             <Container>
                 <Row>
                     <Col>
-                        <h1>Sell</h1>
-                        <p>This is the sell page.</p>
+                        <h1>{moduleLang.name}</h1>
+                        <p>{moduleLang.pageNameDescription}</p>
                     </Col>
                 </Row>
 
@@ -97,15 +133,37 @@ export default function Sell() {
                     <Col md={3}>
                         <div className="card">
                             <article className="card-group-item">
-                                <header className="card-header"><h6 className="title">Action</h6></header>
+                                <header className="card-header"><h6 className="title">{moduleLang.todaySells}</h6></header>
+
                                 <div className="filter-content">
                                     <div className="list-group list-group-flush">
                                         <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create sell </span>
-
                                     </div>
-                                    {/*list-group .*/}
                                 </div>
+
+                                <ListGroup as="ol" numbered>
+
+                                    <ListGroup.Item
+                                        as="li"
+                                        className="d-flex justify-content-between align-items-start"
+                                    >
+                                        <div className="ms-2 me-auto">
+                                            <div className="fw-bold">Subheading</div>
+                                            Cras justo odio
+                                        </div>
+                                        <Badge variant="primary" pill>
+                                            14
+                                        </Badge>
+                                    </ListGroup.Item>
+
+                                </ListGroup>
+
                             </article>
+
+
+
+
+
                             {/*card-group-item.*/}
                         </div>
 
@@ -115,11 +173,12 @@ export default function Sell() {
 
                         <div className="card bg-info">
                             <article className="card-group-item">
-                                <header className="card-header"><h6 className="title">Sell List</h6></header>
+                                <header className="card-header"><h6 className="title">{moduleLang.pointOfSell}</h6></header>
                                 <div className="filter-content">
                                     <div className="list-group list-group-flush">
 
-                                        {categories.map(sell=>{
+
+                                        {sells.map(sell=>{
                                             return (
                                                 <div key={sell._id} >
                                                     <div className="d-flex justify-content-between list-group-item">
@@ -146,8 +205,67 @@ export default function Sell() {
                                     {/*list-group .*/}
                                 </div>
                             </article>
-                            {/*card-group-item.*/}
                         </div>
+                        <br/>
+                        <div className="card">
+                            <article className="card-group-item">
+                                <header className="card-header"><h6 className="title">{moduleLang.pointOfSell}</h6></header>
+
+                                <div className="filter-content">
+
+                                    <div className="list-group list-group-flush">
+
+                                        <div className="container">
+                                            <div className="row">
+
+                                                {
+                                                    stocks.map(stock=>{
+
+                                                        return (
+                                                            <ProductThumbnail/>
+                                                        );
+                                                    })
+                                                }
+
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <br/>
+                                        <br/>
+                                        <br/>
+
+                                        {sells.map(sell=>{
+                                            return (
+                                                <div key={sell._id} >
+                                                    <div className="d-flex justify-content-between list-group-item">
+                                                        <a href="#" className="">
+                                                            {sell.name}
+                                                        </a>
+                                                        <span className="">
+
+                                                            <Button variant={"success"} className="mx-1" onClick={()=>{
+                                                                handleShow(sell)
+                                                            }}>Edit</Button>
+
+                                                            <Button variant={"danger"} onClick={()=>{
+                                                                handleDeleteSell(sell._id)
+                                                            }}>Delete</Button>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                            )
+                                        })}
+
+                                    </div>
+                                    {/*list-group .*/}
+                                </div>
+                            </article>
+                        </div>
+
 
                     </Col>
                 </Row>

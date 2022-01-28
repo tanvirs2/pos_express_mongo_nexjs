@@ -36,15 +36,16 @@ export default function Home() {
               <BigMenu compData={{name:"Stock", link: "/stock"}}/>
 
             </Col>
+
             <Col className="mb-4 offset-md-3 offset-xl-0">
 
-              <BigMenu compData={{name:"Sell", link: "/sell"}}/>
+              <BigMenu compData={{name:"Customer", link: "/customer"}}/>
 
             </Col>
 
             <Col className="mb-4 offset-md-3 offset-xl-0">
 
-              <BigMenu compData={{name:"Customer", link: "/customer"}}/>
+              <BigMenu compData={{name:"Sell", link: "/sell"}}/>
 
             </Col>
           </Row>
