@@ -31,7 +31,9 @@ router.get('/productName/:productName', async (req, res) => {
     try {
         let colName= req.params.productName;
 
-        const product = await Product.find({ name: { $regex: '.*' + colName + '.*' } });
+        const product = await Product.find({ name: { $regex: new RegExp(`.*${colName}.*`), $options: 'i' } });
+        //`^((?!'+colName+').)*$`
+        //const product = await Product.find({ name: { $regex: '.*' + colName + '.*' } });
 
         res.json(product);
 

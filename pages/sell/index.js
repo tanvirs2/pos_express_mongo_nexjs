@@ -7,6 +7,7 @@ import AsyncSelect from 'react-select/async';
 import appLanguage from '../../utilities/language'
 
 import ModalComp from '../../components/sell/Modal';
+import Select from "react-select";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/sell/';
@@ -60,6 +61,8 @@ function PaymentFooter(props) {
 
 function POSRow(props){
 
+    console.log(props.itemRow)
+
     return (
         <div className="col">
             {/* Keeps count of product rows */}
@@ -88,30 +91,35 @@ function POSRow(props){
 
                 <tbody>
 
-                <tr className="product_row" data-row_index={1}>
-                    <td>
-                        <div>
-                            ddd
-                        </div>
-                    </td>
-                    <td>198.00</td>
-                    <td>
+                {props.itemRow.map(itemRow=>{
+                    return (
+                        <tr className="product_row" >
+                            <td>
+                                <div>
+                                    ddd
+                                </div>
+                            </td>
+                            <td>198.00</td>
+                            <td>
 
-                        <div className="input-group input-number">
-                            <input type="text" className="form-control pos_quantity input_number mousetrap input_quantity" />
-                        </div>
+                                <div className="input-group input-number">
+                                    <input type="text" className="form-control pos_quantity input_number mousetrap input_quantity" />
+                                </div>
 
-                    </td>
-                    <td>
-                        <input type="text" name="products[1][unit_price_inc_tax]" className="form-control pos_unit_price_inc_tax input_number"/>
-                    </td>
-                    <td className="text-center v-center">
-                        <span className="display_currency pos_line_total_text ">৳ 2,050.00</span>
-                    </td>
-                    <td className="text-center">
-                        close
-                    </td>
-                </tr>
+                            </td>
+                            <td>
+                                <input type="text" name="products[1][unit_price_inc_tax]" className="form-control pos_unit_price_inc_tax input_number"/>
+                            </td>
+                            <td className="text-center v-center">
+                                <span className="display_currency pos_line_total_text ">৳ 2,050.00</span>
+                            </td>
+                            <td className="text-center">
+                                close
+                            </td>
+                        </tr>
+                    );
+                })}
+
 
 
                 </tbody>
@@ -127,8 +135,13 @@ function ProductThumbnail(props){
     let stock = props.stock
     let product = props.stock.product
 
+    const handleProductThumbnailClick = ()=>{
+        //setItemRow(props.stock)
+        props.itemRowForSales(props.stock)
+    }
+
     return (
-        <Col md={4} className="p-1">
+        <Col md={4} className="p-1" onClick={handleProductThumbnailClick}>
             <div className="card" style={{height: '160px'}}>
                 <img className="card-img-top p-1" style={{height: '70px'}} src="/prod.png" alt="Card image cap"/>
                 <div className="card-body p-1">
@@ -150,6 +163,8 @@ export default function Sell() {
     const [show, setShow] = useState(false);
     const [sells, setSells] = useState([]);
     const [stocks, setStocks] = useState([]);
+    const [itemRow, setItemRow] = useState([]);
+    const [stocksProducts, setStocksProducts] = useState([]);
     const [sell, setSell] = useState('');
 
 
@@ -165,6 +180,15 @@ export default function Sell() {
             .then(response=>response.json())
             .then(data=>{
                 //console.log(data);
+                setStocksProducts(
+                    data.map(stock=>{
+                        return {
+                            id: stock.product._id,
+                            label: `${stock.product.name} - ${stock.quantityPurchased}`,
+                            value: stock.product.name
+                        };
+                    })
+                );
                 setStocks(data);
             });
 
@@ -206,26 +230,13 @@ export default function Sell() {
                 )
             }
         })
-
-
-        /*Swal.fire({
-            title: 'Do you want to delete the Sell?',
-            showCancelButton: true,
-            confirmButtonText: 'Delete',
-            denyButtonText: `Don't save`,
-        }).then((result) => {
-            /!* Read more about isConfirmed, isDenied below *!/
-            if (result.isConfirmed) {
-
-
-                Swal.fire('Delete!', '', 'error')
-
-            } else if (result.isDenied) {
-                Swal.fire('Changes are not saved', '', 'info')
-            }
-        })*/
     };
 
+
+    const itemRowForSales = (stock) => {
+        //setItemRow(itemRow.push(stock))
+        setItemRow([{},{}])
+    };
 
     const loadProducts = (inputValue, callback) => {
 
@@ -379,13 +390,24 @@ export default function Sell() {
 
                                                         {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
 
-                                                        <AsyncSelect
+                                                        {/*<AsyncSelect
                                                             className="w-75"
                                                             cacheOptions
                                                             placeholder={moduleLang.selectProduct}
                                                             instanceId={2}
                                                             loadOptions={loadProducts}
                                                             isClearable
+                                                        />*/}
+
+                                                        <Select
+                                                            instanceId={2}
+                                                            className="w-75"
+                                                            classNamePrefix="select"
+                                                            isClearable
+                                                            isSearchable
+                                                            placeholder={moduleLang.selectProduct}
+                                                            name="product"
+                                                            options={stocksProducts}
                                                         />
 
                                                         &nbsp;
@@ -402,7 +424,7 @@ export default function Sell() {
                                             {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
 
 
-                                            <POSRow/>
+                                            <POSRow itemRow={itemRow}/>
                                             <PaymentFooter/>
 
 
@@ -443,7 +465,7 @@ export default function Sell() {
 
                                                         return (
                                                             <React.Fragment key={stock._id}>
-                                                                <ProductThumbnail stock={stock}/>
+                                                                <ProductThumbnail stock={stock} itemRowForSales={itemRowForSales}/>
                                                             </React.Fragment>
                                                         );
                                                     })

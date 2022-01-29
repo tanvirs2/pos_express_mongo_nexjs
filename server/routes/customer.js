@@ -30,7 +30,7 @@ router.get('/customerName/:customerName', async (req, res) => {
     try {
         let colName= req.params.customerName;
 
-        const customer = await Customer.find({ name: { $regex: '.*' + colName + '.*' } });
+        const customer = await Customer.find({ name: { $regex: new RegExp(`.*${colName}.*`), $options: 'i' } });
 
         res.json(customer);
     } catch (err) {
