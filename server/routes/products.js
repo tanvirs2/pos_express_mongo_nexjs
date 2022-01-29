@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const Customer = require("../models/Customer");
 
 
 router.get('/', async (req, res) => {
@@ -19,6 +20,21 @@ router.get('/:productId', async (req, res) => {
     try {
         const product = await Product.find();
         res.json(product);
+    } catch (err) {
+        res.json({massage: err});
+    }
+
+});
+
+router.get('/productName/:productName', async (req, res) => {
+
+    try {
+        let colName= req.params.productName;
+
+        const product = await Product.find({ name: { $regex: '.*' + colName + '.*' } });
+
+        res.json(product);
+
     } catch (err) {
         res.json({massage: err});
     }

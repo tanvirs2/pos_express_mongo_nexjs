@@ -13,15 +13,16 @@ export default function Customer() {
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
     const [show, setShow] = useState(false);
-    const [customers, setcustomers] = useState([]);
+    const [customers, setCustomers] = useState([]);
     const [customer, setCustomer] = useState('');
 
     useEffect(()=>{
+        console.log(hostApi)
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setcustomers(data);
+                setCustomers(data);
             });
     }, []);
 
@@ -31,7 +32,7 @@ export default function Customer() {
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setcustomers(data);
+                setCustomers(data);
             });
 
     }

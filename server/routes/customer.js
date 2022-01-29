@@ -6,7 +6,7 @@ const Customer = require('../models/Customer');
 router.get('/', async (req, res) => {
 
     try {
-        const customer = await Customer.find().populate('category');
+        const customer = await Customer.find();
         res.json(customer);
     } catch (err) {
         res.json({massage: err});
@@ -24,6 +24,21 @@ router.get('/:customerId', async (req, res) => {
     }
 
 });
+
+router.get('/customerName/:customerName', async (req, res) => {
+
+    try {
+        let colName= req.params.customerName;
+
+        const customer = await Customer.find({ name: { $regex: '.*' + colName + '.*' } });
+
+        res.json(customer);
+    } catch (err) {
+        res.json({massage: err});
+    }
+
+});
+
 
 // save customer
 router.post('/', (req, res)=>{
