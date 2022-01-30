@@ -1,7 +1,8 @@
 import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge} from "react-bootstrap";
 import Swal from 'sweetalert2'
+import {RiCloseCircleFill} from 'react-icons/ri'
 import Link from "next/link";
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, Fragment, forwardRef, useImperativeHandle} from "react";
 import AsyncSelect from 'react-select/async';
 
 import appLanguage from '../../utilities/language'
@@ -19,8 +20,102 @@ const selectedLanguage = process.env.NEXT_PUBLIC_APP_LANGUAGE;
 
 let moduleLang = appLanguage[selectedLanguage].sellModule;
 
+//let qtyArray = [];
 
-function PaymentFooter(props) {
+function sellingSummery() {
+    let product_rows = document.querySelectorAll('.product_row');
+
+    let summeryItem = [...product_rows].reduce((sum, product_row) => {
+        return sum + Number(product_row.querySelector('.pos_quantity').value)
+    }, 0);
+
+    document.querySelector('#summery-item').innerHTML = summeryItem;
+
+    let summeryPrice = [...product_rows].reduce((sum, product_row) => {
+        return sum + Number(product_row.querySelector('.pos_unit_price').value)
+    }, 0);
+
+    document.querySelector('#summery-qty').innerHTML = summeryPrice;
+
+}
+
+function ChildTR(props) {
+
+    let itemRow = props.itemRow;
+
+    const [inpPrice, setInpPrice] = useState(itemRow.product.price);
+    const [inpQuantity, setInpQuantity] = useState(1);
+
+    useEffect(()=>{
+
+    }, [inpQuantity]);
+
+
+    const closeThisRow = (index) => {
+
+        let removedRow = props.itemRows.filter((row, ind) => {
+            return index !== ind;
+        })
+
+        props.setItemRow(removedRow)
+
+    }
+
+    const handlePriceChange = (e) => {
+        //console.log(e.target.value);
+        sellingSummery()
+        let price = e.target.value;
+        setInpPrice(price)
+    }
+
+
+    const handleQuantityChange = (e, index) => {
+        let qty = e.target.value;
+
+        sellingSummery();
+        setInpQuantity(qty)
+        props.itemRows[index].fromRowQty = qty;
+        props.setItemRow(props.itemRows)
+        //console.log(e.target.value, index, props.itemRows);
+    }
+
+
+    return (
+        <tr className="product_row">
+            <td>
+                <div>
+                    {itemRow.product.name} - <small className="text-danger">{itemRow.name}</small>
+                </div>
+            </td>
+            <td>{itemRow.quantityPurchased}</td>
+            <td>
+
+                <div className="input-group input-number">
+                    <input type="text" value={inpQuantity} onChange={(e )=>{
+                        handleQuantityChange(e, props.itemIndex)
+                    }} className="form-control pos_quantity input_number mousetrap input_quantity" />
+                </div>
+
+            </td>
+            <td>
+                <input type="text" name="products" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
+            </td>
+            <td className="text-center v-center">
+                <span className="display_currency pos_line_total_text ">৳ { inpQuantity * inpPrice }</span>
+            </td>
+            <td className="text-center">
+                <RiCloseCircleFill color="FireBrick" onClick={()=>{
+                    closeThisRow(props.itemIndex)
+                }}/>
+
+            </td>
+        </tr>
+    );
+}
+
+const PaymentFooter = forwardRef((props, ref) => {
+
+    const [sellingSummery, setSellingSummery] = useState({});
 
     return (
         <div className="bg-secondary text-white position-absolute w-100 fixed-bottom">
@@ -28,12 +123,12 @@ function PaymentFooter(props) {
 
                 <Col md={{ span: 2, offset: 1 }}>
                     Item: <br/>
-                    100
+                    <div id="summery-item">0</div>
                 </Col>
 
                 <Col md={2}>
                     Total: <br/>
-                    100
+                    <div id="summery-qty">0</div>
                 </Col>
 
                 <Col md={{ span: 3, offset: 4 }}>
@@ -57,14 +152,12 @@ function PaymentFooter(props) {
             </div>
         </div>
     );
-}
+})
 
 function POSRow(props){
 
-    console.log(props.itemRow)
-
     return (
-        <div className="col">
+        <div className="col overflow-scroll" style={{height: '40vh'}}>
             {/* Keeps count of product rows */}
 
             <table className="table table-condensed table-bordered table-striped table-responsive">
@@ -91,32 +184,12 @@ function POSRow(props){
 
                 <tbody>
 
-                {props.itemRow.map(itemRow=>{
+                {props.itemRow.map((itemRow, index)=>{
+
                     return (
-                        <tr className="product_row" >
-                            <td>
-                                <div>
-                                    ddd
-                                </div>
-                            </td>
-                            <td>198.00</td>
-                            <td>
-
-                                <div className="input-group input-number">
-                                    <input type="text" className="form-control pos_quantity input_number mousetrap input_quantity" />
-                                </div>
-
-                            </td>
-                            <td>
-                                <input type="text" name="products[1][unit_price_inc_tax]" className="form-control pos_unit_price_inc_tax input_number"/>
-                            </td>
-                            <td className="text-center v-center">
-                                <span className="display_currency pos_line_total_text ">৳ 2,050.00</span>
-                            </td>
-                            <td className="text-center">
-                                close
-                            </td>
-                        </tr>
+                        <Fragment key={index}>
+                            <ChildTR itemRow={itemRow} itemRows={props.itemRow} itemIndex={index} setItemRow={props.setItemRow}/>
+                        </Fragment>
                     );
                 })}
 
@@ -142,12 +215,12 @@ function ProductThumbnail(props){
 
     return (
         <Col md={4} className="p-1" onClick={handleProductThumbnailClick}>
-            <div className="card" style={{height: '160px'}}>
+            <div className="card" style={{height: '160px', cursor: 'pointer'}}>
                 <img className="card-img-top p-1" style={{height: '70px'}} src="/prod.png" alt="Card image cap"/>
                 <div className="card-body p-1">
                     <b>{product.name} (<small className="text-success">{stock.quantityPurchased}</small>)</b>
-                    <small>{product.code}d</small>
-                    <small>{stock.name}</small>
+                    <small>{product.code}</small>
+                    <small> {stock.name}</small>
                 </div>
             </div>
         </Col>
@@ -167,6 +240,9 @@ export default function Sell() {
     const [stocksProducts, setStocksProducts] = useState([]);
     const [sell, setSell] = useState('');
 
+    useEffect(()=>{
+        sellingSummery();
+    }, [itemRow])
 
     useEffect(()=>{
         fetch(hostApi)
@@ -235,7 +311,7 @@ export default function Sell() {
 
     const itemRowForSales = (stock) => {
         //setItemRow(itemRow.push(stock))
-        setItemRow([{},{}])
+        setItemRow([...itemRow, stock])
     };
 
     const loadProducts = (inputValue, callback) => {
@@ -424,8 +500,8 @@ export default function Sell() {
                                             {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
 
 
-                                            <POSRow itemRow={itemRow}/>
-                                            <PaymentFooter/>
+                                            <POSRow itemRow={itemRow} setItemRow={setItemRow} />
+                                            <PaymentFooter itemRows={itemRow} />
 
 
                                             {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
