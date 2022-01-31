@@ -37,6 +37,13 @@ function sellingSummery() {
 
     document.querySelector('#summery-qty').innerHTML = summeryPrice;
 
+    let pos_line_total = [...product_rows].reduce((sum, product_row) => {
+        return sum + Number(product_row.querySelector('.pos_line_total_text').childNodes[1].wholeText)
+    }, 0);
+
+
+    document.querySelector('#summery_line_total').innerHTML = pos_line_total;
+
 }
 
 function ChildTR(props) {
@@ -101,7 +108,7 @@ function ChildTR(props) {
                 <input type="text" name="products" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td className="text-center v-center">
-                <span className="display_currency pos_line_total_text ">৳ { inpQuantity * inpPrice }</span>
+                ৳<span className="display_currency pos_line_total_text "> { inpQuantity * inpPrice }</span>
             </td>
             <td className="text-center">
                 <RiCloseCircleFill color="FireBrick" onClick={()=>{
@@ -133,7 +140,7 @@ const PaymentFooter = forwardRef((props, ref) => {
 
                 <Col md={{ span: 3, offset: 4 }}>
                     Total Payable: <br/>
-                    100
+                    <div id="summery_line_total">0</div>
                 </Col>
 
             </div>
@@ -157,7 +164,7 @@ const PaymentFooter = forwardRef((props, ref) => {
 function POSRow(props){
 
     return (
-        <div className="col overflow-scroll" style={{height: '40vh'}}>
+        <div className="col overflow-auto" style={{height: '40vh'}}>
             {/* Keeps count of product rows */}
 
             <table className="table table-condensed table-bordered table-striped table-responsive">
@@ -215,7 +222,7 @@ function ProductThumbnail(props){
 
     return (
         <Col md={4} className="p-1" onClick={handleProductThumbnailClick}>
-            <div className="card" style={{height: '160px', cursor: 'pointer'}}>
+            <div className="card" style={{height: '160px', cursor: 'pointer', overflow: 'auto'}}>
                 <img className="card-img-top p-1" style={{height: '70px'}} src="/prod.png" alt="Card image cap"/>
                 <div className="card-body p-1">
                     <b>{product.name} (<small className="text-success">{stock.quantityPurchased}</small>)</b>
