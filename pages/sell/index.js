@@ -1,13 +1,16 @@
 import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge} from "react-bootstrap";
 import Swal from 'sweetalert2'
-import {RiCloseCircleFill} from 'react-icons/ri'
-import Link from "next/link";
-import React, {useState, useRef, useEffect, Fragment, forwardRef, useImperativeHandle} from "react";
+import React, {useState, useEffect} from "react";
 import AsyncSelect from 'react-select/async';
 
 import appLanguage from '../../utilities/language'
 
 import ModalComp from '../../components/sell/Modal';
+import {sellingSummeryProcessFunc} from '../../components/sell/sellFunctionality';
+import {POSRow} from '../../components/sell/POSRow';
+import ProductThumbnail from '../../components/sell/ProductThumbnail';
+import PaymentFooter from '../../components/sell/PaymentFooter';
+
 import Select from "react-select";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
@@ -20,227 +23,9 @@ const selectedLanguage = process.env.NEXT_PUBLIC_APP_LANGUAGE;
 
 let moduleLang = appLanguage[selectedLanguage].sellModule;
 
-//let qtyArray = [];
-
-function sellingSummeryProcessFunc() {
-    let product_rows = document.querySelectorAll('.product_row');
-
-    let summeryItem = [...product_rows].reduce((sum, product_row) => {
-        return sum + Number(product_row.querySelector('.pos_quantity').value)
-    }, 0);
-
-    document.querySelector('#summery-item').innerHTML = summeryItem;
-
-    let summeryPrice = [...product_rows].reduce((sum, product_row) => {
-        return sum + Number(product_row.querySelector('.pos_unit_price').value)
-    }, 0);
-
-    document.querySelector('#summery-qty').innerHTML = summeryPrice;
-
-    let pos_line_total = [...product_rows].reduce((sum, product_row) => {
-        return sum + Number(product_row.querySelector('.pos_line_total_text').childNodes[1].wholeText)
-    }, 0);
-
-
-    document.querySelector('#summery_line_total').innerHTML = pos_line_total;
-
-}
-
-function ChildTR(props) {
-
-    let itemRow = props.itemRow;
-
-    const [inpPrice, setInpPrice] = useState(itemRow.product.price);
-    const [inpQuantity, setInpQuantity] = useState(1);
-
-    useEffect(()=>{
-
-        sellingSummeryProcessFunc();
-
-    }, [inpQuantity, inpPrice]);
-
-
-    const closeThisRow = (index) => {
-
-        let removedRow = props.itemRows.filter((row, ind) => {
-            return index !== ind;
-        })
-
-        props.setItemRow(removedRow)
-
-    }
-
-    const handlePriceChange = (e) => {
-        //console.log(e.target.value);
-        sellingSummeryProcessFunc()
-        let price = e.target.value;
-        setInpPrice(price)
-    }
-
-
-    const handleQuantityChange = (e, index) => {
-        let qty = e.target.value;
-
-        sellingSummeryProcessFunc();
-        setInpQuantity(qty)
-        props.itemRows[index].fromRowQty = qty;
-        props.setItemRow(props.itemRows)
-        //console.log(e.target.value, index, props.itemRows);
-    }
-
-
-    return (
-        <tr className="product_row">
-            <td>
-                <div>
-                    {itemRow.product.name} - <small className="text-danger">{itemRow.name}</small>
-                </div>
-            </td>
-            <td>{itemRow.quantityPurchased}</td>
-            <td>
-
-                <div className="input-group input-number">
-                    <input type="text" value={inpQuantity} onChange={(e )=>{
-                        handleQuantityChange(e, props.itemIndex)
-                    }} className="form-control pos_quantity input_number mousetrap input_quantity" />
-                </div>
-
-            </td>
-            <td>
-                <input type="text" name="products" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
-            </td>
-            <td className="text-center v-center">
-                ৳<span className="display_currency pos_line_total_text "> { inpQuantity * inpPrice }</span>
-            </td>
-            <td className="text-center">
-                <RiCloseCircleFill color="FireBrick" onClick={()=>{
-                    closeThisRow(props.itemIndex)
-                }}/>
-
-            </td>
-        </tr>
-    );
-}
-
-const PaymentFooter = forwardRef((props, ref) => {
-
-    const [sellingSummery, setSellingSummery] = useState({});
-
-    return (
-        <div className="bg-secondary text-white position-absolute w-100 fixed-bottom">
-            <div className="row pt-3">
-
-                <Col md={{ span: 2, offset: 1 }}>
-                    Item: <br/>
-                    <div id="summery-item">0</div>
-                </Col>
-
-                <Col md={2}>
-                    Total: <br/>
-                    <div id="summery-qty">0</div>
-                </Col>
-
-                <Col md={{ span: 3, offset: 4 }}>
-                    Total Payable: <br/>
-                    <div id="summery_line_total">0</div>
-                </Col>
-
-            </div>
-
-            <hr/>
-
-            <div className="row pb-3">
-
-
-
-                <Col md={{span: 'auto', offset: 5}}>
-                    <button className="btn btn-danger btn-lg">Paid</button>
-                </Col>
-
-
-            </div>
-        </div>
-    );
-})
-
-function POSRow(props){
-
-    return (
-        <div className="col overflow-auto" style={{height: '40vh'}}>
-            {/* Keeps count of product rows */}
-
-            <table className="table table-condensed table-bordered table-striped table-responsive">
-                <thead>
-                <tr>
-                    <th className="tex-center  col-md-4 ">
-                        Product <i className="fa fa-info-circle text-info hover-q no-print " aria-hidden="true" data-container="body" data-toggle="popover" data-placement="auto bottom" data-content="Click <i>product name</i> to edit price, discount & tax. <br/>Click <i>Comment Icon</i> to enter serial number / IMEI or additional note.<br/><br/>Click <i>Modifier Icon</i>(if enabled) for modifiers" data-html="true" data-trigger="hover" />									</th>
-                    <th className="text-center">
-                        Stock
-                    </th>
-                    <th className="text-center col-md-3">
-                        Quantity
-                    </th>
-                    <th className="text-center col-md-2 ">
-                        Unit Price
-                    </th>
-                    <th className="text-center col-md-2">
-                        Subtotal
-                    </th>
-                    <th className="text-center"><i className="fa fa-close" />
-                    </th>
-                </tr>
-                </thead>
-
-                <tbody>
-
-                {props.itemRow.map((itemRow, index)=>{
-
-                    return (
-                        <Fragment key={index}>
-                            <ChildTR itemRow={itemRow} itemRows={props.itemRow} itemIndex={index} setItemRow={props.setItemRow}/>
-                        </Fragment>
-                    );
-                })}
-
-
-
-                </tbody>
-            </table>
-        </div>
-    );
-}
-
-function ProductThumbnail(props){
-
-    //console.log(props.stock.product)
-
-    let stock = props.stock
-    let product = props.stock.product
-
-    const handleProductThumbnailClick = ()=>{
-        //setItemRow(props.stock)
-        props.itemRowForSales(props.stock)
-    }
-
-    return (
-        <Col md={4} className="p-1" onClick={handleProductThumbnailClick}>
-            <div className="card" style={{height: '160px', cursor: 'pointer', overflow: 'auto'}}>
-                <img className="card-img-top p-1" style={{height: '70px'}} src="/prod.png" alt="Card image cap"/>
-                <div className="card-body p-1">
-                    <b>{product.name} (<small className="text-success">{stock.quantityPurchased}</small>)</b>
-                    <small>{product.code}</small>
-                    <small> {stock.name}</small>
-                </div>
-            </div>
-        </Col>
-    );
-};
-
 export default function Sell() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
-
-
 
     const [show, setShow] = useState(false);
     const [sells, setSells] = useState([]);
@@ -268,6 +53,7 @@ export default function Sell() {
                 setStocksProducts(
                     data.map(stock=>{
                         return {
+                            ...stock,
                             id: stock.product._id,
                             label: `${stock.product.name} - ${stock.quantityPurchased}`,
                             value: stock.product.name
@@ -320,6 +106,7 @@ export default function Sell() {
 
     const itemRowForSales = (stock) => {
         //setItemRow(itemRow.push(stock))
+        //console.log(stock);
         setItemRow([...itemRow, stock])
     };
 
@@ -493,6 +280,14 @@ export default function Sell() {
                                                             placeholder={moduleLang.selectProduct}
                                                             name="product"
                                                             options={stocksProducts}
+                                                            onChange={(stockObject)=>{
+
+                                                                if (stockObject) {
+                                                                    itemRowForSales(stockObject);
+                                                                }
+
+                                                                //console.log(itemRow, '||||', stockObject);
+                                                            }}
                                                         />
 
                                                         &nbsp;
