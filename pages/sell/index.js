@@ -22,7 +22,7 @@ let moduleLang = appLanguage[selectedLanguage].sellModule;
 
 //let qtyArray = [];
 
-function sellingSummery() {
+function sellingSummeryProcessFunc() {
     let product_rows = document.querySelectorAll('.product_row');
 
     let summeryItem = [...product_rows].reduce((sum, product_row) => {
@@ -55,7 +55,9 @@ function ChildTR(props) {
 
     useEffect(()=>{
 
-    }, [inpQuantity]);
+        sellingSummeryProcessFunc();
+
+    }, [inpQuantity, inpPrice]);
 
 
     const closeThisRow = (index) => {
@@ -70,7 +72,7 @@ function ChildTR(props) {
 
     const handlePriceChange = (e) => {
         //console.log(e.target.value);
-        sellingSummery()
+        sellingSummeryProcessFunc()
         let price = e.target.value;
         setInpPrice(price)
     }
@@ -79,7 +81,7 @@ function ChildTR(props) {
     const handleQuantityChange = (e, index) => {
         let qty = e.target.value;
 
-        sellingSummery();
+        sellingSummeryProcessFunc();
         setInpQuantity(qty)
         props.itemRows[index].fromRowQty = qty;
         props.setItemRow(props.itemRows)
@@ -248,7 +250,7 @@ export default function Sell() {
     const [sell, setSell] = useState('');
 
     useEffect(()=>{
-        sellingSummery();
+        sellingSummeryProcessFunc();
     }, [itemRow])
 
     useEffect(()=>{
