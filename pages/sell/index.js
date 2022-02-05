@@ -1,7 +1,9 @@
 import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge} from "react-bootstrap";
 import Swal from 'sweetalert2'
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, createContext, useRef} from "react";
 import AsyncSelect from 'react-select/async';
+import Select from "react-select";
+import { Formik } from 'formik';
 
 import appLanguage from '../../utilities/language'
 
@@ -11,13 +13,15 @@ import {POSRow} from '../../components/sell/POSRow';
 import ProductThumbnail from '../../components/sell/ProductThumbnail';
 import PaymentFooter from '../../components/sell/PaymentFooter';
 
-import Select from "react-select";
+import {SubmitContext} from "../../components/sell/context/context";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/sell/';
 const hostApiStock = host+'/stock/';
 const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
+
+
 
 const selectedLanguage = process.env.NEXT_PUBLIC_APP_LANGUAGE;
 
@@ -26,6 +30,8 @@ let moduleLang = appLanguage[selectedLanguage].sellModule;
 export default function Sell() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
+
+    let sellForm = useRef();
 
     const [show, setShow] = useState(false);
     const [sells, setSells] = useState([]);
@@ -139,130 +145,139 @@ export default function Sell() {
             });
     };
 
+    let contextObject = {
+        handleSubmitButton: (e) => {
+            e.preventDefault();
+        }
+    };
 
-
+    function handleSellSubmitButton(e) {
+        e.preventDefault();
+        let sellFormElm = sellForm.current;
+        let sellFormRow = e.target;
+        console.log(sellFormElm, sellFormRow);
+    }
 
 
     return (
         <>
-            <ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={sell} />
+            <ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={sell}/>
 
-            <Container fluid>
-                <Row>
-                    <Col>
-                        <h1>{moduleLang.name}</h1>
-                        <p>{moduleLang.pageNameDescription}</p>
-                    </Col>
-                </Row>
+            <SubmitContext.Provider value={contextObject}>
+                <Container fluid>
+                    <Row>
+                        <Col>
+                            <h1>{moduleLang.name}</h1>
+                            <p>{moduleLang.pageNameDescription}</p>
+                        </Col>
+                    </Row>
 
-                <Row>
-                    <Col md={3}>
-                        <div className="card">
-                            <article className="card-group-item">
-                                <header className="card-header"><h6 className="title">{moduleLang.todaySells}</h6></header>
+                    <Row>
+                        <Col md={3}>
+                            <div className="card">
+                                <article className="card-group-item">
+                                    <header className="card-header"><h6 className="title">{moduleLang.todaySells}</h6>
+                                    </header>
 
-                                <div className="filter-content">
-                                    <div className="list-group list-group-flush">
-                                        <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create sell </span>
+                                    <div className="filter-content">
+                                        <div className="list-group list-group-flush">
+                                            <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create sell </span>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <ListGroup as="ol" numbered>
+                                    <ListGroup as="ol" numbered>
 
-                                    {sells.map(sell=>{
-                                        return (
-                                            <ListGroup.Item
-                                                key={sell._id}
-                                                as="li"
-                                                className="d-flex justify-content-between align-items-start"
-                                            >
-                                                <div className="ms-2 me-auto">
-                                                    <div className="fw-bold">Subheading</div>
-                                                    Cras justo odio
-                                                </div>
-                                                <Badge variant="primary" pill>
-                                                    14
-                                                </Badge>
-                                            </ListGroup.Item>
-                                            /*<div key={sell._id} >
-                                                <div className="d-flex justify-content-between list-group-item">
-                                                    <a href="#" className="">
-                                                        {sell.name}
-                                                    </a>
-                                                    <span className="">
-
-                                                            <Button variant={"success"} className="mx-1" onClick={()=>{
-                                                                handleShow(sell)
-                                                            }}>Edit</Button>
-
-                                                            <Button variant={"danger"} onClick={()=>{
-                                                                handleDeleteSell(sell._id)
-                                                            }}>Delete</Button>
-                                                        </span>
-                                                </div>
-                                            </div>*/
-
-                                        )
-                                    })}
-
-
-
-                                </ListGroup>
-
-                            </article>
-
-
-
-
-
-                            {/*card-group-item.*/}
-                        </div>
-
-                    </Col>
-
-                    <Col>
-
-                        <div className="card" style={{minHeight: '75vh'}}>
-                            <article className="card-group-item">
-                                <header className="card-header">
-                                    <h6 className="title">{moduleLang.pointOfSell}</h6>
-                                </header>
-                                <div className="filter-content">
-                                    <div className="list-group list-group-flush">
-
-
-                                        <div>
-                                            <div className="d-flex justify-content-between list-group-item">
-                                            <Form className="w-100">
-                                                <div className="col-auto">
-                                                    <label className="sr-only" >Username</label>
-                                                    <div className="input-group mb-2">
-
-                                                        {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
-
-                                                        <AsyncSelect
-                                                            className="w-75"
-                                                            instanceId={2}
-                                                            cacheOptions
-                                                            placeholder={moduleLang.selectCustomer}
-                                                            loadOptions={loadCustomers}
-                                                            isClearable
-                                                        />
-
-                                                        &nbsp;
-                                                        <div className="input-group-prepend">
-                                                            <div className="btn btn-danger">+</div>
-                                                        </div>
+                                        {sells.map(sell => {
+                                            return (
+                                                <ListGroup.Item
+                                                    key={sell._id}
+                                                    as="li"
+                                                    className="d-flex justify-content-between align-items-start"
+                                                >
+                                                    <div className="ms-2 me-auto">
+                                                        <div className="fw-bold">Subheading</div>
+                                                        Cras justo odio
                                                     </div>
-                                                </div>
+                                                    <Badge variant="primary" pill>
+                                                        14
+                                                    </Badge>
+                                                </ListGroup.Item>
+                                                /*<div key={sell._id} >
+                                                    <div className="d-flex justify-content-between list-group-item">
+                                                        <a href="#" className="">
+                                                            {sell.name}
+                                                        </a>
+                                                        <span className="">
 
-                                                <div className="col-auto">
-                                                    <label className="sr-only" >Username</label>
-                                                    <div className="input-group mb-2">
+                                                                <Button variant={"success"} className="mx-1" onClick={()=>{
+                                                                    handleShow(sell)
+                                                                }}>Edit</Button>
 
-                                                        {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
+                                                                <Button variant={"danger"} onClick={()=>{
+                                                                    handleDeleteSell(sell._id)
+                                                                }}>Delete</Button>
+                                                            </span>
+                                                    </div>
+                                                </div>*/
 
-                                                        {/*<AsyncSelect
+                                            )
+                                        })}
+
+
+                                    </ListGroup>
+
+                                </article>
+
+
+                                {/*card-group-item.*/}
+                            </div>
+
+                        </Col>
+
+                        <Col>
+
+                            <div className="card" style={{minHeight: '75vh'}}>
+                                <article className="card-group-item">
+                                    <header className="card-header">
+                                        <h6 className="title">{moduleLang.pointOfSell}</h6>
+                                    </header>
+                                    <div className="filter-content">
+                                        <div className="list-group list-group-flush">
+
+
+                                            <div>
+                                                <div className="d-flex justify-content-between list-group-item">
+                                                    {/*sell form*/}
+                                                    <Form className="w-100" ref={sellForm}>
+                                                        <div className="col-auto">
+                                                            <label className="sr-only">Username</label>
+                                                            <div className="input-group mb-2">
+
+                                                                {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
+
+                                                                <AsyncSelect
+                                                                    className="w-75"
+                                                                    instanceId={2}
+                                                                    cacheOptions
+                                                                    placeholder={moduleLang.selectCustomer}
+                                                                    loadOptions={loadCustomers}
+                                                                    isClearable
+                                                                />
+
+                                                                &nbsp;
+                                                                <div className="input-group-prepend">
+                                                                    <div className="btn btn-danger">+</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="col-auto">
+                                                            <label className="sr-only">Username</label>
+                                                            <div className="input-group mb-2">
+
+                                                                {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
+
+                                                                {/*<AsyncSelect
                                                             className="w-75"
                                                             cacheOptions
                                                             placeholder={moduleLang.selectProduct}
@@ -271,102 +286,107 @@ export default function Sell() {
                                                             isClearable
                                                         />*/}
 
-                                                        <Select
-                                                            instanceId={2}
-                                                            className="w-75"
-                                                            classNamePrefix="select"
-                                                            isClearable
-                                                            isSearchable
-                                                            placeholder={moduleLang.selectProduct}
-                                                            name="product"
-                                                            options={stocksProducts}
-                                                            onChange={(stockObject)=>{
+                                                                <Select
+                                                                    instanceId={2}
+                                                                    className="w-75"
+                                                                    classNamePrefix="select"
+                                                                    isClearable
+                                                                    isSearchable
+                                                                    placeholder={moduleLang.selectProduct}
+                                                                    name="product"
+                                                                    options={stocksProducts}
+                                                                    onChange={(stockObject) => {
 
-                                                                if (stockObject) {
-                                                                    itemRowForSales(stockObject);
-                                                                }
+                                                                        if (stockObject) {
+                                                                            itemRowForSales(stockObject);
+                                                                        }
 
-                                                                //console.log(itemRow, '||||', stockObject);
-                                                            }}
-                                                        />
+                                                                        //console.log(itemRow, '||||', stockObject);
+                                                                    }}
+                                                                />
 
-                                                        &nbsp;
-                                                        <div className="input-group-prepend">
-                                                            <div className="btn btn-danger">+</div>
+                                                                &nbsp;
+                                                                <div className="input-group-prepend">
+                                                                    <div className="btn btn-danger">+</div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                    </Form>
+
+
                                                 </div>
-                                            </Form>
+
+                                                {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
+
+                                                <Form onSubmit={handleSellSubmitButton}>
+
+                                                    <POSRow itemRow={itemRow} setItemRow={setItemRow}/>
+                                                    <PaymentFooter itemRows={itemRow}/>
+
+                                                </Form>
 
 
-                                        </div>
-
-                                            {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
-
-
-                                            <POSRow itemRow={itemRow} setItemRow={setItemRow} />
-                                            <PaymentFooter itemRows={itemRow} />
-
-
-                                            {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
-
-                                        </div>
-
-
-                                    </div>
-                                    {/*list-group .*/}
-                                </div>
-                            </article>
-                        </div>
-                        <br/>
-
-
-
-                    </Col>
-
-                    {/*3rd col*/}
-
-                    <Col md={3}>
-                        <div className="card mb-3">
-                            <article className="card-group-item">
-                                <header className="card-header"><h6 className="title">{moduleLang.productList}</h6></header>
-
-                                <div className="filter-content">
-
-                                    <div className="list-group list-group-flush">
-
-                                        <div className="container py-2">
-                                            <div className="row">
-
-                                                {
-                                                    stocks.map(stock=>{
-
-                                                        //console.log('ddddddddd', stock)
-
-                                                        return (
-                                                            <React.Fragment key={stock._id}>
-                                                                <ProductThumbnail stock={stock} itemRowForSales={itemRowForSales}/>
-                                                            </React.Fragment>
-                                                        );
-                                                    })
-                                                }
+                                                {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
 
                                             </div>
+
+
                                         </div>
-
+                                        {/*list-group .*/}
                                     </div>
-                                    {/*list-group .*/}
-                                </div>
-                            </article>
-                        </div>
-
-                    </Col>
-
-                </Row>
+                                </article>
+                            </div>
+                            <br/>
 
 
+                        </Col>
 
-            </Container>
+                        {/*3rd col*/}
+
+                        <Col md={3}>
+                            <div className="card mb-3">
+                                <article className="card-group-item">
+                                    <header className="card-header"><h6 className="title">{moduleLang.productList}</h6>
+                                    </header>
+
+                                    <div className="filter-content">
+
+                                        <div className="list-group list-group-flush">
+
+                                            <div className="container py-2">
+                                                <div className="row">
+
+                                                    {
+                                                        stocks.map(stock => {
+
+                                                            //console.log('ddddddddd', stock)
+
+                                                            return (
+                                                                <React.Fragment key={stock._id}>
+                                                                    <ProductThumbnail stock={stock}
+                                                                                      itemRowForSales={itemRowForSales}/>
+                                                                </React.Fragment>
+                                                            );
+                                                        })
+                                                    }
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {/*list-group .*/}
+                                    </div>
+                                </article>
+                            </div>
+
+                        </Col>
+
+                    </Row>
+
+
+                </Container>
+            </SubmitContext.Provider>
+
         </>
     );
 }
