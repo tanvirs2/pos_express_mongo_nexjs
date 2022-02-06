@@ -17,6 +17,7 @@ import {SubmitContext} from "../../components/sell/context/context";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/sell/';
+const hostApiPurchaseOrder = host+'/purchaseOrder/';
 const hostApiStock = host+'/stock/';
 const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
@@ -36,6 +37,7 @@ export default function Sell() {
     const [selectedCustomerForSell, setSelectedCustomerForSell] = useState({});
     const [show, setShow] = useState(false);
     const [sells, setSells] = useState([]);
+    const [purchaseOrders, setPurchaseOrder] = useState([]);
     const [stocks, setStocks] = useState([]);
     const [itemRow, setItemRow] = useState([]);
     const [stocksProducts, setStocksProducts] = useState([]);
@@ -61,6 +63,13 @@ export default function Sell() {
             .then(data=>{
                 //console.log(data);
                 setSells(data);
+            });
+
+        fetch(hostApiPurchaseOrder)
+            .then(response=>response.json())
+            .then(data=>{
+                //console.log(data);
+                setPurchaseOrder(data);
             });
 
         fetch(hostApiStock)
@@ -200,7 +209,7 @@ export default function Sell() {
             };
         });
 
-        console.log(JSON.stringify(bodyData))
+        //console.log(JSON.stringify(bodyData))
 
         fetch(hostApi, {
             method: "POST",
@@ -216,7 +225,7 @@ export default function Sell() {
 
     return (
         <>
-            <ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={sell}/>
+            {/*<ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={sell}/>*/}
 
             <SubmitContext.Provider value={contextObject}>
                 <Container fluid>
@@ -231,27 +240,31 @@ export default function Sell() {
                         <Col md={3}>
                             <div className="card">
                                 <article className="card-group-item">
-                                    <header className="card-header"><h6 className="title">{moduleLang.todaySells}</h6>
+                                    <header className="card-header">
+                                        <h6 className="title">{moduleLang.todaySells}</h6>
                                     </header>
 
-                                    <div className="filter-content">
+                                    {/*<div className="filter-content">
                                         <div className="list-group list-group-flush">
                                             <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create sell </span>
                                         </div>
-                                    </div>
+                                    </div>*/}
 
                                     <ListGroup as="ol" numbered>
 
-                                        {sells.map(sell => {
+                                        {purchaseOrders.map(purchaseOrder => {
+
+                                            //console.log(sell)
+
                                             return (
                                                 <ListGroup.Item
-                                                    key={sell._id}
+                                                    key={purchaseOrder._id}
                                                     as="li"
                                                     className="d-flex justify-content-between align-items-start"
                                                 >
                                                     <div className="ms-2 me-auto">
-                                                        <div className="fw-bold">Subheading</div>
-                                                        Cras justo odio
+                                                        <div className="fw-bold">{purchaseOrder.customer.name}</div>
+                                                        {/*{purchaseOrder.product.name}*/}
                                                     </div>
                                                     <Badge variant="primary" pill>
                                                         14

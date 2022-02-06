@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const SellSchema = mongoose.Schema({
+const PurchaseOrder = mongoose.Schema({
     name: {
         type: String,
         required: false,
@@ -14,10 +14,6 @@ const SellSchema = mongoose.Schema({
     customer: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Customer'
-    },
-    purchaseOrder: {
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Purchase_Order'
     },
     payment: {
         type: Number,
@@ -43,4 +39,4 @@ const SellSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Sell', SellSchema);
+module.exports = mongoose.model('Purchase_Order', PurchaseOrder);

@@ -7,8 +7,8 @@ const PurchaseOrderModel = require('../models/PurchaseOrder');
 router.get('/', async (req, res) => {
 
     try {
-        const sell = await Sell.find().populate('product').populate('customer');
-        res.json(sell);
+        const po = await PurchaseOrderModel.find().populate('product').populate('customer');
+        res.json(po);
     } catch (err) {
         res.json({massage: err});
     }
@@ -41,10 +41,15 @@ router.post('/', async (req, res)=>{
 
     console.log('---->', poPromise);
 
+        /*.then(data => {
+            console.log(data);
+            //res.send(data);
+        })*/
+
+
     req.body.forEach((sellData)=>{
         let sell = new Sell({
             //name: sellData.name,
-            purchaseOrder: poPromise._id,
             customer: sellData.customer,
             product: sellData.product,
             quantity: sellData.quantity,
