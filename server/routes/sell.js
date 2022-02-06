@@ -30,17 +30,26 @@ router.post('/', (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    console.log(req.body);
+    //console.log(req.body);
 
-    /*const sell = new Sell({
-        name: req.body.name,
-        description: req.body.description
+
+    req.body.forEach((sellData)=>{
+        let sell = new Sell({
+            //name: sellData.name,
+            customer: sellData.customer,
+            product: sellData.product,
+            quantity: sellData.quantity,
+            payment: sellData.price,
+            //description: req.body.description
+        });
+
+        sell.save().then(data => {
+            console.log(data);
+            res.send(data);
+        })
     });
 
-    sell.save().then(data => {
-        console.log(data);
-        res.send(data);
-    })*/
+
 
 
 });

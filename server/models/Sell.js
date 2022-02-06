@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const SellSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: false,
+        default: 'not set'
     },
     product: {
         type: mongoose.SchemaTypes.ObjectId,
@@ -32,6 +33,7 @@ const SellSchema = mongoose.Schema({
     },
     description: {
         type: String,
+        default: 'description'
     },
 },{
     timestamps: true

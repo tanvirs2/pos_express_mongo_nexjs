@@ -168,20 +168,35 @@ export default function Sell() {
         let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
         //console.log(sellFormRow.quantities.value, sellFormRow.prices);
+        //console.log(sellFormRow.quantities.constructor.name)
 
-        console.log(selectedCustomerForSell, sellFormElm.product)
+        let quantityRow = [];
+        let pricesRow = [];
+        let productsRow = [];
 
-        let customers = selectedCustomerForSell.id
+        if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
+            quantityRow = [...sellFormRow.quantities];
+            pricesRow = [...sellFormRow.prices]
+            productsRow = [...sellFormRow.products]
+        } else {
+            quantityRow = [sellFormRow.quantities];
+            pricesRow = [sellFormRow.prices]
+            productsRow = [sellFormRow.products]
+        }
 
-        let bodyData = [...sellFormRow.quantities].map((data, index)=>{
 
-            //console.log(index, [...sellFormRow.prices][index])
-            //console.log('data1')
-            let prices = [...sellFormRow.prices][index].value
-            let products = [...sellFormRow.products][index].value
+        let customers = selectedCustomerForSell.id;
+
+        let bodyData = quantityRow.map((data, index)=>{
+
+            let prices = pricesRow[index].value
+            let products = productsRow[index].value
 
             return {
-                customer: customers, product: products, quantity: data.value, price: prices
+                customer: customers,
+                product: products,
+                quantity: data.value,
+                price: prices
             };
         });
 
