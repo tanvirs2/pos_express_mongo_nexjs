@@ -30,8 +30,9 @@ router.post('/', (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
+    console.log(req.body);
 
-    const sell = new Sell({
+    /*const sell = new Sell({
         name: req.body.name,
         description: req.body.description
     });
@@ -39,7 +40,7 @@ router.post('/', (req, res)=>{
     sell.save().then(data => {
         console.log(data);
         res.send(data);
-    })
+    })*/
 
 
 });

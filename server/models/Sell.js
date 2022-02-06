@@ -17,6 +17,9 @@ const SellSchema = mongoose.Schema({
     payment: {
         type: Number,
     },
+    quantity: {
+        type: Number,
+    },
     date: {
         type: Date,
         default: Date.now()

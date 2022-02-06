@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import React, {useState, useEffect, createContext, useRef} from "react";
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
-import { Formik } from 'formik';
+import { useFormik } from 'formik';
 
 import appLanguage from '../../utilities/language'
 
@@ -33,12 +33,23 @@ export default function Sell() {
 
     let sellForm = useRef();
 
+    const [selectedCustomerForSell, setSelectedCustomerForSell] = useState({});
     const [show, setShow] = useState(false);
     const [sells, setSells] = useState([]);
     const [stocks, setStocks] = useState([]);
     const [itemRow, setItemRow] = useState([]);
     const [stocksProducts, setStocksProducts] = useState([]);
     const [sell, setSell] = useState('');
+
+
+    const sellFormikForm = useFormik({
+        initialValues: {
+            prices: '',
+        },
+        onSubmit: values => {
+            alert(JSON.stringify(values));
+        },
+    });
 
     useEffect(()=>{
         sellingSummeryProcessFunc();
@@ -148,14 +159,43 @@ export default function Sell() {
     let contextObject = {
         handleSubmitButton: (e) => {
             e.preventDefault();
-        }
+        },
+        sellFormikForm
     };
 
     function handleSellSubmitButton(e) {
         e.preventDefault();
         let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
-        console.log(sellFormElm, sellFormRow);
+        //console.log(sellFormRow.quantities.value, sellFormRow.prices);
+
+        console.log(selectedCustomerForSell, sellFormElm.product)
+
+        let customers = selectedCustomerForSell.id
+
+        let bodyData = [...sellFormRow.quantities].map((data, index)=>{
+
+            //console.log(index, [...sellFormRow.prices][index])
+            //console.log('data1')
+            let prices = [...sellFormRow.prices][index].value
+            let products = [...sellFormRow.products][index].value
+
+            return {
+                customer: customers, product: products, quantity: data.value, price: prices
+            };
+        });
+
+        console.log(JSON.stringify(bodyData))
+
+        fetch(hostApi, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(bodyData)
+        })
+
     }
 
 
@@ -262,6 +302,11 @@ export default function Sell() {
                                                                     placeholder={moduleLang.selectCustomer}
                                                                     loadOptions={loadCustomers}
                                                                     isClearable
+                                                                    name="customer"
+                                                                    onChange={(customer)=>{
+                                                                        setSelectedCustomerForSell(customer);
+                                                                        //console.log(e);
+                                                                    }}
                                                                 />
 
                                                                 &nbsp;

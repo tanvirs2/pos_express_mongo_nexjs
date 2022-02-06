@@ -1,6 +1,7 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, {Fragment, useContext, useEffect, useState} from "react";
 import {sellingSummeryProcessFunc} from "./sellFunctionality";
 import {RiCloseCircleFill} from "react-icons/ri";
+import {SubmitContext} from "./context/context";
 
 function ChildTR(props) {
 
@@ -14,6 +15,8 @@ function ChildTR(props) {
         sellingSummeryProcessFunc();
 
     }, [inpQuantity, inpPrice]);
+
+    let contextObject = useContext(SubmitContext) //sellFormikForm
 
 
     const closeThisRow = (index) => {
@@ -29,6 +32,9 @@ function ChildTR(props) {
     const handlePriceChange = (e) => {
         //console.log(e.target.value);
         sellingSummeryProcessFunc()
+
+        //contextObject.sellFormikForm.handleChange(e); //from context object
+
         let price = e.target.value;
         setInpPrice(price)
     }
@@ -56,14 +62,17 @@ function ChildTR(props) {
             <td>
 
                 <div className="input-group input-number">
-                    <input type="text" value={inpQuantity} onChange={(e )=>{
+                    <input type="text" name="quantities"  value={inpQuantity} onChange={(e )=>{
                         handleQuantityChange(e, props.itemIndex)
                     }} className="form-control pos_quantity input_number mousetrap input_quantity" />
+
+                    <input type="hidden" name="products" value={itemRow.product._id} readOnly/>
+
                 </div>
 
             </td>
             <td>
-                <input type="text" name="products" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
+                <input type="text" name="prices" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td className="text-center v-center">
                 ৳<span className="display_currency pos_line_total_text "> { inpQuantity * inpPrice }</span>
