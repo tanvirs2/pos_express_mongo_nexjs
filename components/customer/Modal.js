@@ -1,28 +1,22 @@
 import React, {useEffect, useRef, useState} from "react";
 import Swal from "sweetalert2";
 import {Button, Form, Modal} from "react-bootstrap";
+import appLanguage from "../../utilities/language";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/customer/';
-const belongCategoriesHostApi = host+'/categories/';
+
+let moduleLang = appLanguage.customerModule;
 
 export default function ModalComp(props) {
 
     const [customer, setCustomer] = useState('');
-    const [categories, setCategories] = useState([]);
     let form = useRef(null);
 
     useEffect(() => {
 
         //form.current.name.value = 'ddd'
         //console.log(form.current);
-
-        fetch(belongCategoriesHostApi)
-            .then(response=>response.json())
-            .then(categories=>{
-                //console.log(data);
-                setCategories(categories); // get Categories for Categories select option
-            });
 
         setCustomer(props.customerData);
 
@@ -44,9 +38,10 @@ export default function ModalComp(props) {
         const res = await fetch(hostApi, {
             body: JSON.stringify({
                 name: form.current.name.value,
-                price: form.current.price.value,
+                phone: form.current.phone.value,
+                email: form.current.email.value,
+                address: form.current.address.value,
                 description: form.current.description.value,
-                category: form.current.category.value,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -56,7 +51,7 @@ export default function ModalComp(props) {
 
         const result = await res.json()
 
-        console.log('tncccccccccc', form.current.price.value)
+        //console.log('tncccccccccc', form.current.price.value)
 
         props.updateCustomerList();
         handleClose()
@@ -82,6 +77,9 @@ export default function ModalComp(props) {
         const res = await fetch(hostApi+props.customerData._id, {
             body: JSON.stringify({
                 name: form.current.name.value,
+                phone: form.current.phone.value,
+                email: form.current.email.value,
+                address: form.current.address.value,
                 description: form.current.description.value,
             }),
             headers: {
@@ -118,6 +116,9 @@ export default function ModalComp(props) {
                    onShow={()=>{
                        //console.log(form.current);
                        form.current.name.value = (props.customerData.name) ? props.customerData.name : '';
+                       form.current.phone.value = (props.customerData.phone) ? props.customerData.phone : '';
+                       form.current.email.value = (props.customerData.email) ? props.customerData.email : '';
+                       form.current.address.value = (props.customerData.address) ? props.customerData.address : '';
                        form.current.description.value = (props.customerData.description) ? props.customerData.description : '';
 
                    }}
@@ -136,24 +137,21 @@ export default function ModalComp(props) {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Customer Price</Form.Label>
-                            <Form.Control type="text" placeholder="Type Price" name="price"/>
+                            <Form.Label>Phone</Form.Label>
+                            <Form.Control type="text" placeholder="Phone number" name="phone"/>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Customer Email</Form.Label>
+                            <Form.Control type="email" placeholder="Type email" name="email"/>
                         </Form.Group>
 
                         <br/>
 
-                        <Form.Select aria-label="Default select example" name="category">
-                            <option>Open this select menu</option>
-
-                            {
-                                categories.map(category=>{
-                                    return (
-                                        <option key={category._id} value={category._id}>{category.name}</option>
-                                    )
-                                })
-                            }
-
-                        </Form.Select>
+                        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control as="textarea" rows={3} name="address"/>
+                        </Form.Group>
 
                         <br/>
 

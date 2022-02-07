@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Sell = require('../models/Sell');
+const Stock = require('../models/Stock');
 const PurchaseOrderModel = require('../models/PurchaseOrder');
 
 
@@ -31,7 +32,7 @@ router.post('/', async (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    //console.log(req.body[0].customer);
+    console.log(req.body);
 
     let po = new PurchaseOrderModel({
         customer: req.body[0].customer,
@@ -39,9 +40,21 @@ router.post('/', async (req, res)=>{
 
     let poPromise = await po.save()
 
-    console.log('---->', poPromise);
+    //console.log('---->', poPromise);
+
+    // get stock
 
     req.body.forEach((sellData)=>{
+
+        /*try {
+            Stock.updateOne({_id: sellData.stock}, req.body)
+                .then(stock=>stock)
+            ;
+            //res.json(stock);
+        } catch (err){
+            res.json({massage: err});
+        }*/
+
         let sell = new Sell({
             //name: sellData.name,
             purchaseOrder: poPromise._id,

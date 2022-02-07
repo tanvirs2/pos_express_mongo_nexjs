@@ -23,10 +23,7 @@ const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
 
 
-
-const selectedLanguage = process.env.NEXT_PUBLIC_APP_LANGUAGE;
-
-let moduleLang = appLanguage[selectedLanguage].sellModule;
+let moduleLang = appLanguage.sellModule;
 
 export default function Sell() {
 
@@ -131,8 +128,7 @@ export default function Sell() {
 
 
     const itemRowForSales = (stock) => {
-        //setItemRow(itemRow.push(stock))
-        //console.log(stock);
+        //console.log('stock->', stock, '<-stock');
         setItemRow([...itemRow, stock])
     };
 
@@ -182,15 +178,18 @@ export default function Sell() {
         let quantityRow = [];
         let pricesRow = [];
         let productsRow = [];
+        let stockRow = [];
 
         if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
             quantityRow = [...sellFormRow.quantities];
             pricesRow = [...sellFormRow.prices]
             productsRow = [...sellFormRow.products]
+            stockRow = [...sellFormRow.stock]
         } else {
             quantityRow = [sellFormRow.quantities];
             pricesRow = [sellFormRow.prices]
             productsRow = [sellFormRow.products]
+            stockRow = [sellFormRow.stock]
         }
 
 
@@ -200,12 +199,16 @@ export default function Sell() {
 
             let prices = pricesRow[index].value
             let products = productsRow[index].value
+            let quantities = data.value
+            let stocks = stockRow[index].value
 
             return {
-                customer: customers,
+                customer: customers, // get customer from outside of this block
+
                 product: products,
-                quantity: data.value,
-                price: prices
+                quantity: quantities,
+                price: prices,
+                stock: stocks
             };
         });
 
@@ -436,8 +439,7 @@ export default function Sell() {
 
                                                             return (
                                                                 <React.Fragment key={stock._id}>
-                                                                    <ProductThumbnail stock={stock}
-                                                                                      itemRowForSales={itemRowForSales}/>
+                                                                    <ProductThumbnail stock={stock} itemRowForSales={itemRowForSales}/>
                                                                 </React.Fragment>
                                                             );
                                                         })

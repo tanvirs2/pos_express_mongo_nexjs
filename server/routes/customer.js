@@ -50,9 +50,10 @@ router.post('/', (req, res)=>{
 
     const customer = new Customer({
         name: req.body.name,
-        price: req.body.price,
+        phone: req.body.phone,
+        email: req.body.email,
+        address: req.body.address,
         description: req.body.description,
-        category: req.body.category,
     });
 
     customer.save().then(data => {

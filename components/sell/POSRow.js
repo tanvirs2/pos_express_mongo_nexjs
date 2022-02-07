@@ -7,6 +7,8 @@ function ChildTR(props) {
 
     let itemRow = props.itemRow;
 
+    //console.log(itemRow);
+
     const [inpPrice, setInpPrice] = useState(itemRow.product.price);
     const [inpQuantity, setInpQuantity] = useState(1);
 
@@ -67,6 +69,7 @@ function ChildTR(props) {
                     }} className="form-control pos_quantity input_number mousetrap input_quantity" />
 
                     <input type="hidden" name="products" value={itemRow.product._id} readOnly/>
+                    <input type="hidden" name="stock" value={itemRow._id} readOnly/>
 
                 </div>
 
