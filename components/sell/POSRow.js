@@ -61,6 +61,7 @@ function ChildTR(props) {
                 </div>
             </td>
             <td>{itemRow.quantityPurchased}</td>
+            <td>{itemRow.quantityStock}</td>
             <td>
 
                 <div className="input-group input-number">
@@ -102,7 +103,10 @@ export function POSRow(props){
                     <th className="tex-center  col-md-4 ">
                         Product <i className="fa fa-info-circle text-info hover-q no-print " aria-hidden="true" data-container="body" data-toggle="popover" data-placement="auto bottom" data-content="Click <i>product name</i> to edit price, discount & tax. <br/>Click <i>Comment Icon</i> to enter serial number / IMEI or additional note.<br/><br/>Click <i>Modifier Icon</i>(if enabled) for modifiers" data-html="true" data-trigger="hover" />									</th>
                     <th className="text-center">
-                        Stock
+                        P.Stock
+                    </th>
+                    <th className="text-center">
+                        B.Stock
                     </th>
                     <th className="text-center col-md-3">
                         Quantity

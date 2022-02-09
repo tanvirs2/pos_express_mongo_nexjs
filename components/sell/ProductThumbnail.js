@@ -18,7 +18,7 @@ export default function ProductThumbnail(props){
             <div className="card" style={{height: '160px', cursor: 'pointer', overflow: 'auto'}}>
                 <img className="card-img-top p-1" style={{height: '70px'}} src="/prod.png" alt="Card image cap"/>
                 <div className="card-body p-1">
-                    <b>{product.name} (<small className="text-success">{stock.quantityPurchased}</small>)</b>
+                    <b>{product.name} (<small className="text-success">{stock.quantityStock}</small>)</b>
                     <small>{product.code}</small>
                     <small> {stock.name}</small>
                 </div>

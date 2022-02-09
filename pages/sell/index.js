@@ -4,6 +4,7 @@ import React, {useState, useEffect, createContext, useRef} from "react";
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
 import { useFormik } from 'formik';
+import { useForm } from 'react-hook-form';
 
 import appLanguage from '../../utilities/language'
 
@@ -23,13 +24,14 @@ const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
 
 
+
 let moduleLang = appLanguage.sellModule;
 
 export default function Sell() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
-    let sellForm = useRef();
+    //let sellForm = useRef();
 
     const [selectedCustomerForSell, setSelectedCustomerForSell] = useState({});
     const [show, setShow] = useState(false);
@@ -39,6 +41,20 @@ export default function Sell() {
     const [itemRow, setItemRow] = useState([]);
     const [stocksProducts, setStocksProducts] = useState([]);
     const [sell, setSell] = useState('');
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const onSubmit = (data, e) => {
+        console.log(selectedCustomerForSell.id);
+
+        if (selectedCustomerForSell.id) {
+            handleSellSubmitButton(e);
+        }
+
+
+
+        //console.log(data, '-->', e.target)
+    };
+    console.log(errors);
 
 
     const sellFormikForm = useFormik({
@@ -170,7 +186,7 @@ export default function Sell() {
 
     function handleSellSubmitButton(e) {
         e.preventDefault();
-        let sellFormElm = sellForm.current;
+        //let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
         //console.log(sellFormRow.quantities.value, sellFormRow.prices);
         //console.log(sellFormRow.quantities.constructor.name)
@@ -314,97 +330,93 @@ export default function Sell() {
                                     </header>
                                     <div className="filter-content">
                                         <div className="list-group list-group-flush">
+                                            <Form onSubmit={handleSubmit(onSubmit)}>
+
+                                                <div>
+                                                    <div className="d-flex justify-content-between list-group-item">
+                                                        {/*sell form*/}
+                                                        {/*<Form className="w-100" ref={sellForm}>*/}
+                                                        <div className="w-100" >
+                                                            <div className="col-auto">
+                                                                <label className="sr-only">Username</label>
+                                                                <div className="input-group mb-2">
+
+                                                                    {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
+
+                                                                    <AsyncSelect
+                                                                        className="w-75 bg-success"
+                                                                        instanceId={2}
+                                                                        cacheOptions
+                                                                        placeholder={moduleLang.selectCustomer}
+                                                                        loadOptions={loadCustomers}
+                                                                        isClearable
+                                                                        name="customer"
+                                                                        onChange={(customer)=>{
+                                                                            setSelectedCustomerForSell(customer);
+                                                                            //console.log('-->',customer);
+                                                                        }}
+                                                                    />
+
+                                                                    &nbsp;
+                                                                    <div className="input-group-prepend">
+                                                                        <div className="btn btn-danger">+</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="col-auto">
+                                                                <label className="sr-only">Username</label>
+                                                                <div className="input-group mb-2">
+
+                                                                    {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
+
+                                                                    {/*<AsyncSelect
+                                                                className="w-75"
+                                                                cacheOptions
+                                                                placeholder={moduleLang.selectProduct}
+                                                                instanceId={2}
+                                                                loadOptions={loadProducts}
+                                                                isClearable
+                                                            />*/}
 
 
-                                            <div>
-                                                <div className="d-flex justify-content-between list-group-item">
-                                                    {/*sell form*/}
-                                                    <Form className="w-100" ref={sellForm}>
-                                                        <div className="col-auto">
-                                                            <label className="sr-only">Username</label>
-                                                            <div className="input-group mb-2">
 
-                                                                {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
+                                                                    <Select
+                                                                        instanceId={2}
+                                                                        className="w-75"
+                                                                        classNamePrefix="select"
+                                                                        isClearable
+                                                                        isSearchable
+                                                                        placeholder={moduleLang.selectProduct}
+                                                                        name="product"
+                                                                        options={stocksProducts}
+                                                                        onChange={(stockObject) => {
 
-                                                                <AsyncSelect
-                                                                    className="w-75"
-                                                                    instanceId={2}
-                                                                    cacheOptions
-                                                                    placeholder={moduleLang.selectCustomer}
-                                                                    loadOptions={loadCustomers}
-                                                                    isClearable
-                                                                    name="customer"
-                                                                    onChange={(customer)=>{
-                                                                        setSelectedCustomerForSell(customer);
-                                                                        //console.log(e);
-                                                                    }}
-                                                                />
+                                                                            if (stockObject) {
+                                                                                itemRowForSales(stockObject);
+                                                                            }
 
-                                                                &nbsp;
-                                                                <div className="input-group-prepend">
-                                                                    <div className="btn btn-danger">+</div>
+                                                                            //console.log(itemRow, '||||', stockObject);
+                                                                        }}
+                                                                    />
+
+                                                                    &nbsp;
+                                                                    <div className="input-group-prepend">
+                                                                        <div className="btn btn-danger">+</div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        {/*</Form>*/}
 
-                                                        <div className="col-auto">
-                                                            <label className="sr-only">Username</label>
-                                                            <div className="input-group mb-2">
+                                                    </div>
 
-                                                                {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
-
-                                                                {/*<AsyncSelect
-                                                            className="w-75"
-                                                            cacheOptions
-                                                            placeholder={moduleLang.selectProduct}
-                                                            instanceId={2}
-                                                            loadOptions={loadProducts}
-                                                            isClearable
-                                                        />*/}
-
-                                                                <Select
-                                                                    instanceId={2}
-                                                                    className="w-75"
-                                                                    classNamePrefix="select"
-                                                                    isClearable
-                                                                    isSearchable
-                                                                    placeholder={moduleLang.selectProduct}
-                                                                    name="product"
-                                                                    options={stocksProducts}
-                                                                    onChange={(stockObject) => {
-
-                                                                        if (stockObject) {
-                                                                            itemRowForSales(stockObject);
-                                                                        }
-
-                                                                        //console.log(itemRow, '||||', stockObject);
-                                                                    }}
-                                                                />
-
-                                                                &nbsp;
-                                                                <div className="input-group-prepend">
-                                                                    <div className="btn btn-danger">+</div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </Form>
-
+                                                        <POSRow itemRow={itemRow} setItemRow={setItemRow}/>
+                                                        <PaymentFooter itemRows={itemRow}/>
 
                                                 </div>
 
-                                                {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
-
-                                                <Form onSubmit={handleSellSubmitButton}>
-
-                                                    <POSRow itemRow={itemRow} setItemRow={setItemRow}/>
-                                                    <PaymentFooter itemRows={itemRow}/>
-
-                                                </Form>
-
-
-                                                {/*zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz*/}
-
-                                            </div>
+                                            </Form>
 
 
                                         </div>

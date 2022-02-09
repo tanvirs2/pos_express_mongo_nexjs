@@ -32,7 +32,7 @@ router.post('/', async (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    console.log(req.body);
+    //console.log(req.body);
 
     let po = new PurchaseOrderModel({
         customer: req.body[0].customer,
@@ -40,20 +40,29 @@ router.post('/', async (req, res)=>{
 
     let poPromise = await po.save()
 
-    //console.log('---->', poPromise);
+    /*let stock = await Stock.findById('61efd4c6402f74aafb221294')
 
-    // get stock
+    stock.description = 'this des bt TS';
 
-    req.body.forEach((sellData)=>{
+    await stock.save();*/
 
-        /*try {
-            Stock.updateOne({_id: sellData.stock}, req.body)
-                .then(stock=>stock)
-            ;
-            //res.json(stock);
+
+    req.body.forEach((sellData, ind)=>{
+
+        try {
+            Stock.findById(sellData.stock).then(async stock=>{
+
+                    stock.quantityStock = stock.quantityStock - sellData.quantity;
+
+                    //console.log(ind, '---->', stock);
+
+                    await stock.save();
+
+                });
+
         } catch (err){
             res.json({massage: err});
-        }*/
+        }
 
         let sell = new Sell({
             //name: sellData.name,

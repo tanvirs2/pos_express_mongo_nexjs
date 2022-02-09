@@ -35,6 +35,7 @@ router.post('/', (req, res)=>{
         name: req.body.name,
         description: req.body.description,
         quantityPurchased: req.body.quantityPurchased,
+        quantityStock: req.body.quantityPurchased,
         unitPrice: req.body.unitPrice,
         product: req.body.product,
     });
