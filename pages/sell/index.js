@@ -1,10 +1,10 @@
 import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge} from "react-bootstrap";
 import Swal from 'sweetalert2'
 import React, {useState, useEffect, createContext, useRef} from "react";
+import Router from "next/router";
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
 import { useFormik } from 'formik';
-import { useForm } from 'react-hook-form';
 
 import appLanguage from '../../utilities/language'
 
@@ -27,34 +27,32 @@ const hostApiProduct = host+'/products/';
 
 let moduleLang = appLanguage.sellModule;
 
+let refreshCount = 0;
 export default function Sell() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
     //let sellForm = useRef();
 
-    const [selectedCustomerForSell, setSelectedCustomerForSell] = useState({});
-    const [show, setShow] = useState(false);
-    const [sells, setSells] = useState([]);
+    const [selectedCustomerForSell, setSelectedCustomerForSell] = useState(null);
     const [purchaseOrders, setPurchaseOrder] = useState([]);
     const [stocks, setStocks] = useState([]);
     const [itemRow, setItemRow] = useState([]);
     const [stocksProducts, setStocksProducts] = useState([]);
+    const [refreshPage, setRefreshPage] = useState('');
+    const [show, setShow] = useState(false);
+    const [sells, setSells] = useState([]);
     const [sell, setSell] = useState('');
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const onSubmit = (data, e) => {
-        console.log(selectedCustomerForSell.id);
 
-        if (selectedCustomerForSell.id) {
-            handleSellSubmitButton(e);
-        }
+    const refreshComponent = () => {
+        setPurchaseOrder([])
+        setStocks([]);
+        setItemRow([]);
+        setStocksProducts([]);
+        setRefreshPage(++refreshCount);
+    }
 
-
-
-        //console.log(data, '-->', e.target)
-    };
-    console.log(errors);
 
 
     const sellFormikForm = useFormik({
@@ -68,9 +66,10 @@ export default function Sell() {
 
     useEffect(()=>{
         sellingSummeryProcessFunc();
-    }, [itemRow])
+    }, [itemRow, refreshPage])
 
     useEffect(()=>{
+        console.log('--->data');
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
@@ -103,7 +102,7 @@ export default function Sell() {
             });
 
 
-    }, []);
+    }, [refreshPage]);
 
     const handleClose = () => setShow(false);
 
@@ -184,7 +183,7 @@ export default function Sell() {
         sellFormikForm
     };
 
-    function handleSellSubmitButton(e) {
+    async function handleSellSubmitButton(e) {
         e.preventDefault();
         //let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
@@ -196,18 +195,27 @@ export default function Sell() {
         let productsRow = [];
         let stockRow = [];
 
-        if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
-            quantityRow = [...sellFormRow.quantities];
-            pricesRow = [...sellFormRow.prices]
-            productsRow = [...sellFormRow.products]
-            stockRow = [...sellFormRow.stock]
+        if (sellFormRow.quantities) {
+            if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
+                quantityRow = [...sellFormRow.quantities];
+                pricesRow = [...sellFormRow.prices];
+                productsRow = [...sellFormRow.products];
+                stockRow = [...sellFormRow.stock];
+            } else {
+                quantityRow = [sellFormRow.quantities];
+                pricesRow = [sellFormRow.prices];
+                productsRow = [sellFormRow.products];
+                stockRow = [sellFormRow.stock];
+            }
         } else {
-            quantityRow = [sellFormRow.quantities];
-            pricesRow = [sellFormRow.prices]
-            productsRow = [sellFormRow.products]
-            stockRow = [sellFormRow.stock]
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: 'Product not added',
+                showConfirmButton: false,
+                //timer: 1500
+            })
         }
-
 
         let customers = selectedCustomerForSell.id;
 
@@ -230,7 +238,7 @@ export default function Sell() {
 
         //console.log(JSON.stringify(bodyData))
 
-        fetch(hostApi, {
+        let sellDone = await fetch(hostApi, {
             method: "POST",
             headers: {
                 'Accept': 'application/json',
@@ -239,6 +247,11 @@ export default function Sell() {
             body: JSON.stringify(bodyData)
         })
 
+        if (sellDone.status === 200) {
+            refreshComponent();
+        }
+
+        console.log('---->',sellDone);
     }
 
 
@@ -330,7 +343,21 @@ export default function Sell() {
                                     </header>
                                     <div className="filter-content">
                                         <div className="list-group list-group-flush">
-                                            <Form onSubmit={handleSubmit(onSubmit)}>
+                                            <Form onSubmit={event => {
+
+                                                if (selectedCustomerForSell) {
+                                                    handleSellSubmitButton(event);
+                                                } else {
+                                                    Swal.fire({
+                                                        position: 'top-end',
+                                                        icon: 'error',
+                                                        title: 'Customer not select',
+                                                        showConfirmButton: false,
+                                                        //timer: 1500
+                                                    })
+                                                }
+
+                                            }}>
 
                                                 <div>
                                                     <div className="d-flex justify-content-between list-group-item">
@@ -344,7 +371,7 @@ export default function Sell() {
                                                                     {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
 
                                                                     <AsyncSelect
-                                                                        className="w-75 bg-success"
+                                                                        className="w-75"
                                                                         instanceId={2}
                                                                         cacheOptions
                                                                         placeholder={moduleLang.selectCustomer}
@@ -361,6 +388,14 @@ export default function Sell() {
                                                                     <div className="input-group-prepend">
                                                                         <div className="btn btn-danger">+</div>
                                                                     </div>
+
+                                                                    {
+                                                                        !selectedCustomerForSell ? <div className="alert alert-danger mt-1 w-75">
+                                                                            <strong>Customer!</strong> need to select
+                                                                            a customer.
+                                                                        </div> : ''
+                                                                    }
+
                                                                 </div>
                                                             </div>
 

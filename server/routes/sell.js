@@ -76,7 +76,7 @@ router.post('/', async (req, res)=>{
 
         sell.save().then(data => {
             //console.log(data);
-            res.send(data);
+            res.json(data);
         })
     });
 
