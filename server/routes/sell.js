@@ -3,6 +3,7 @@ const router = express.Router();
 const Sell = require('../models/Sell');
 const Stock = require('../models/Stock');
 const PurchaseOrderModel = require('../models/PurchaseOrder');
+const collect = require('collect.js');
 
 
 router.get('/', async (req, res) => {
@@ -34,35 +35,39 @@ router.post('/', async (req, res)=>{
 
     //console.log(req.body);
 
+    const collection = collect(req.body).groupBy('stock');
+
+    collection.each(item=>{
+
+        let stockObject = {
+            id: item['items'][0].stock,
+            qty: item.sum('quantity')
+        };
+
+
+        Stock.findById(stockObject.id).then(async stock=>{
+
+            stock.quantityStock = stock.quantityStock - stockObject.qty;
+            let afterStock = await stock.save();
+
+            //console.log('---->', afterStock);
+
+        });
+
+    });
+
+    //console.log('->',stockObject);
+
+    //console.log(collection);
+
     let po = new PurchaseOrderModel({
         customer: req.body[0].customer,
     });
 
     let poPromise = await po.save()
 
-    /*let stock = await Stock.findById('61efd4c6402f74aafb221294')
 
-    stock.description = 'this des bt TS';
-
-    await stock.save();*/
-
-
-    req.body.forEach((sellData, ind)=>{
-
-        try {
-            Stock.findById(sellData.stock).then(async stock=>{
-
-                    stock.quantityStock = stock.quantityStock - sellData.quantity;
-
-                    //console.log(ind, '---->', stock);
-
-                    await stock.save();
-
-                });
-
-        } catch (err){
-            res.json({massage: err});
-        }
+    req.body.every((sellData, ind)=>{
 
         let sell = new Sell({
             //name: sellData.name,
@@ -78,10 +83,8 @@ router.post('/', async (req, res)=>{
             //console.log(data);
             res.json(data);
         })
+
     });
-
-
-
 
 });
 

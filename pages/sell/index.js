@@ -5,6 +5,7 @@ import Router from "next/router";
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
 import { useFormik } from 'formik';
+import collect from "collect.js";
 
 import appLanguage from '../../utilities/language'
 
@@ -69,7 +70,6 @@ export default function Sell() {
     }, [itemRow, refreshPage])
 
     useEffect(()=>{
-        console.log('--->data');
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
@@ -184,16 +184,16 @@ export default function Sell() {
     };
 
     async function handleSellSubmitButton(e) {
-        e.preventDefault();
         //let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
-        //console.log(sellFormRow.quantities.value, sellFormRow.prices);
+        //console.log(sellFormRow.quantities, sellFormRow.prices);
         //console.log(sellFormRow.quantities.constructor.name)
 
         let quantityRow = [];
         let pricesRow = [];
         let productsRow = [];
         let stockRow = [];
+        let stockQtyRow = [];//stockQty
 
         if (sellFormRow.quantities) {
             if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
@@ -201,11 +201,13 @@ export default function Sell() {
                 pricesRow = [...sellFormRow.prices];
                 productsRow = [...sellFormRow.products];
                 stockRow = [...sellFormRow.stock];
+                stockQtyRow = [...sellFormRow.stockQty];
             } else {
                 quantityRow = [sellFormRow.quantities];
                 pricesRow = [sellFormRow.prices];
                 productsRow = [sellFormRow.products];
                 stockRow = [sellFormRow.stock];
+                stockQtyRow = [sellFormRow.stockQty];
             }
         } else {
             Swal.fire({
@@ -225,6 +227,7 @@ export default function Sell() {
             let products = productsRow[index].value
             let quantities = data.value
             let stocks = stockRow[index].value
+            let stockQtys = stockQtyRow[index].value
 
             return {
                 customer: customers, // get customer from outside of this block
@@ -232,11 +235,23 @@ export default function Sell() {
                 product: products,
                 quantity: quantities,
                 price: prices,
-                stock: stocks
+                stock: stocks,
+                stockQty: Number(stockQtys)
             };
         });
 
-        //console.log(JSON.stringify(bodyData))
+        /*const collection = collect(bodyData).groupBy('stock');
+
+
+        collection.each((item) => {
+            //console.log(item.sum('quantity'));
+            let stObj = {id: item['items'][0].stock, qty: item.sum('quantity')};
+            console.log('->',stObj);
+        });*/
+
+        //console.log(collection, collection['items']['61f6369bf06c0abf945b671a'].sum('quantity'));
+
+        //console.log((bodyData))
 
         let sellDone = await fetch(hostApi, {
             method: "POST",
@@ -248,10 +263,15 @@ export default function Sell() {
         })
 
         if (sellDone.status === 200) {
+            Swal.fire(
+                'Sold!',
+                'Product sold.',
+                'success'
+            )
             refreshComponent();
         }
 
-        console.log('---->',sellDone);
+        //console.log('---->',sellDone);
     }
 
 
@@ -344,9 +364,10 @@ export default function Sell() {
                                     <div className="filter-content">
                                         <div className="list-group list-group-flush">
                                             <Form onSubmit={event => {
-
+                                                event.preventDefault();
                                                 if (selectedCustomerForSell) {
                                                     handleSellSubmitButton(event);
+                                                    //console.log(event.target.quantities[1].value);
                                                 } else {
                                                     Swal.fire({
                                                         position: 'top-end',

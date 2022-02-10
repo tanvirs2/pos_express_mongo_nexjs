@@ -71,6 +71,7 @@ function ChildTR(props) {
 
                     <input type="hidden" name="products" value={itemRow.product._id} readOnly/>
                     <input type="hidden" name="stock" value={itemRow._id} readOnly/>
+                    <input type="hidden" name="stockQty" value={itemRow.quantityStock} readOnly/>
 
                 </div>
 
