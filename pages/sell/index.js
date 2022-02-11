@@ -23,6 +23,7 @@ const hostApiPurchaseOrder = host+'/purchaseOrder/';
 const hostApiStock = host+'/stock/';
 const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
+const hostApiCustomerTransaction = host+'/customerTransaction/';
 
 
 
@@ -45,12 +46,16 @@ export default function Sell() {
     const [sells, setSells] = useState([]);
     const [sell, setSell] = useState('');
 
+    let selectRef = useRef();
+    let selectRef2 = useRef();
 
     const refreshComponent = () => {
         setPurchaseOrder([])
         setStocks([]);
         setItemRow([]);
         setStocksProducts([]);
+        selectRef.current.clearValue()
+        selectRef2.current.clearValue()
         setRefreshPage(++refreshCount);
     }
 
@@ -168,13 +173,26 @@ export default function Sell() {
             .then(response=> response.json())
             .then(datas=>{
 
+                //console.log('------->', datas)
+
                 let customer = datas.map((data)=>{
-                    return {id: data._id, value: data.name, label: data.name}
+                    return {id: data._id, value: data.name, address: data.address, label: data.name +' - ['+ (data.organizationName ? data.organizationName: 'No Organization') +']'}
                 });
 
                 callback(customer);
             });
     };
+
+    const customerTransaction = (customer) => {
+        //console.log(customer.id);
+        fetch(hostApiCustomerTransaction+customer.id)
+            .then(response=> response.json())
+            .then(datas=>{
+
+                console.log('------->', datas)
+
+            });
+    }
 
     let contextObject = {
         handleSubmitButton: (e) => {
@@ -188,6 +206,8 @@ export default function Sell() {
         let sellFormRow = e.target;
         //console.log(sellFormRow.quantities, sellFormRow.prices);
         //console.log(sellFormRow.quantities.constructor.name)
+
+        //sellFormRow.payment.value
 
         let quantityRow = [];
         let pricesRow = [];
@@ -220,6 +240,7 @@ export default function Sell() {
         }
 
         let customers = selectedCustomerForSell.id;
+        let payment = sellFormRow.payment.value;
 
         let bodyData = quantityRow.map((data, index)=>{
 
@@ -231,6 +252,7 @@ export default function Sell() {
 
             return {
                 customer: customers, // get customer from outside of this block
+                payment, // get payment from outside of this block
 
                 product: products,
                 quantity: quantities,
@@ -385,83 +407,109 @@ export default function Sell() {
                                                         {/*sell form*/}
                                                         {/*<Form className="w-100" ref={sellForm}>*/}
                                                         <div className="w-100" >
-                                                            <div className="col-auto">
-                                                                <label className="sr-only">Username</label>
-                                                                <div className="input-group mb-2">
+                                                            <div className="row">
+                                                                <div className="col-6 pe-0 ps-0">
+                                                                    <label className="sr-only">Username</label>
+                                                                    <div className="input-group mb-2">
 
-                                                                    {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
+                                                                        {/*<input type="text" className="form-control" onClick={handleCustomerSearch} placeholder={moduleLang.customerName}/>*/}
 
-                                                                    <AsyncSelect
-                                                                        className="w-75"
-                                                                        instanceId={2}
-                                                                        cacheOptions
-                                                                        placeholder={moduleLang.selectCustomer}
-                                                                        loadOptions={loadCustomers}
-                                                                        isClearable
-                                                                        name="customer"
-                                                                        onChange={(customer)=>{
-                                                                            setSelectedCustomerForSell(customer);
-                                                                            //console.log('-->',customer);
-                                                                        }}
-                                                                    />
+                                                                        <AsyncSelect
+                                                                            ref={selectRef}
+                                                                            className="w-100"
+                                                                            instanceId={2}
+                                                                            cacheOptions
+                                                                            placeholder={moduleLang.selectCustomer}
+                                                                            loadOptions={loadCustomers}
+                                                                            isClearable
+                                                                            name="customer"
+                                                                            onChange={(customer)=>{
+                                                                                setSelectedCustomerForSell(customer);
+                                                                                if (customer) {
+                                                                                    customerTransaction(customer);
+                                                                                }
+                                                                                //console.log('-->',customer);
+                                                                            }}
+                                                                        />
 
-                                                                    &nbsp;
-                                                                    <div className="input-group-prepend">
-                                                                        <div className="btn btn-danger">+</div>
+                                                                        {/*&nbsp;
+                                                                        <div className="input-group-prepend">
+                                                                            <div className="btn btn-danger">+</div>
+                                                                        </div>*/}
+
+                                                                        {
+                                                                            !selectedCustomerForSell ? <div className="alert alert-danger mt-1 w-100 ">
+                                                                                <strong>Customer!</strong> need to select
+                                                                                a customer.
+                                                                            </div> : ''
+                                                                        }
+
                                                                     </div>
+                                                                </div>
 
-                                                                    {
-                                                                        !selectedCustomerForSell ? <div className="alert alert-danger mt-1 w-75">
-                                                                            <strong>Customer!</strong> need to select
-                                                                            a customer.
-                                                                        </div> : ''
-                                                                    }
+                                                                <div className="col pe-0 ps-1">
+
+
+                                                                    <table className="table border table-hover">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <th className=" bg-dark text-white px-1" style={{width: "10px"}}>Area:</th>
+                                                                                <td className=" ps-1">{selectedCustomerForSell?.address}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                </div>
+                                                                <div className="col-2 px-1">
+
+                                                                    <table className="table border table-hover ">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <th className="bg-dark text-white px-1" style={{width: "10px"}}>Due:</th>
+                                                                                <td className="ps-1">100000</td>
+                                                                            </tr>
+
+                                                                        </tbody>
+
+                                                                    </table>
+
 
                                                                 </div>
                                                             </div>
 
-                                                            <div className="col-auto">
-                                                                <label className="sr-only">Username</label>
-                                                                <div className="input-group mb-2">
+                                                            <div className="row">
+                                                                <div className="col pe-0 ps-0">
+                                                                    <label className="sr-only">Username</label>
+                                                                    <div className="input-group mb-2">
 
-                                                                    {/*<input type="text" className="form-control" placeholder={moduleLang.productName}/>*/}
+                                                                        <Select
+                                                                            ref={selectRef2}
+                                                                            instanceId={2}
+                                                                            className="w-75"
+                                                                            classNamePrefix="select"
+                                                                            isClearable
+                                                                            isSearchable
+                                                                            placeholder={moduleLang.selectProduct}
+                                                                            name="product"
+                                                                            options={stocksProducts}
+                                                                            onChange={(stockObject) => {
 
-                                                                    {/*<AsyncSelect
-                                                                className="w-75"
-                                                                cacheOptions
-                                                                placeholder={moduleLang.selectProduct}
-                                                                instanceId={2}
-                                                                loadOptions={loadProducts}
-                                                                isClearable
-                                                            />*/}
+                                                                                if (stockObject) {
+                                                                                    itemRowForSales(stockObject);
+                                                                                }
 
+                                                                                //console.log(itemRow, '||||', stockObject);
+                                                                            }}
+                                                                        />
 
-
-                                                                    <Select
-                                                                        instanceId={2}
-                                                                        className="w-75"
-                                                                        classNamePrefix="select"
-                                                                        isClearable
-                                                                        isSearchable
-                                                                        placeholder={moduleLang.selectProduct}
-                                                                        name="product"
-                                                                        options={stocksProducts}
-                                                                        onChange={(stockObject) => {
-
-                                                                            if (stockObject) {
-                                                                                itemRowForSales(stockObject);
-                                                                            }
-
-                                                                            //console.log(itemRow, '||||', stockObject);
-                                                                        }}
-                                                                    />
-
-                                                                    &nbsp;
-                                                                    <div className="input-group-prepend">
-                                                                        <div className="btn btn-danger">+</div>
+                                                                        &nbsp;
+                                                                        <div className="input-group-prepend">
+                                                                            <div className="btn btn-danger">+</div>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                         </div>
                                                         {/*</Form>*/}
 

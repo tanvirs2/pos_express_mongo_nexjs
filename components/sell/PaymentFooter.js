@@ -22,7 +22,14 @@ const PaymentFooter = forwardRef((props, ref) => {
                     <div id="summery-qty">0</div>
                 </Col>
 
-                <Col md={{ span: 3, offset: 4 }}>
+                <Col md={2}>
+                    PayAmount: <br/>
+                    <div>
+                        <input className="form-control" type="text" name="payment"/>
+                    </div>
+                </Col>
+
+                <Col md={{ span: 3, offset: 2 }}>
                     Total Payable: <br/>
                     <div id="summery_line_total">0</div>
                 </Col>

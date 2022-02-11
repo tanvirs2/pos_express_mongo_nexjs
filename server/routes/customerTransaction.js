@@ -1,28 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const Sell = require('../models/Sell');
-const Stock = require('../models/Stock');
-const PurchaseOrderModel = require('../models/PurchaseOrder');
 const CustomerTransaction = require('../models/CustomerTransaction');
-const collect = require('collect.js');
 
 
 router.get('/', async (req, res) => {
 
     try {
-        const sell = await Sell.find().populate('product').populate('customer');
-        res.json(sell);
+        const ct = await CustomerTransaction.find().populate('customer');
+        res.json(ct);
     } catch (err) {
         res.json({massage: err});
     }
 
 });
 
-router.get('/:sellId', async (req, res) => {
+router.get('/:customerId', async (req, res) => {
 
     try {
-        const sell = await Sell.find();
-        res.json(sell);
+        const ct = await CustomerTransaction.find({ customer: req.params.customerId });
+        res.json(ct);
     } catch (err) {
         res.json({massage: err});
     }
@@ -34,51 +31,25 @@ router.post('/', async (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    //console.log(req.body);
+    //console.log(req.body[0].customer);
 
-    const collection = collect(req.body).groupBy('stock');
-
-    collection.each(item=>{
-
-        let stockObject = {
-            id: item['items'][0].stock,
-            qty: item.sum('quantity')
-        };
-
-
-        Stock.findById(stockObject.id).then(async stock=>{
-
-            stock.quantityStock = stock.quantityStock - stockObject.qty;
-            let afterStock = await stock.save();
-
-            //console.log('---->', afterStock);
-
-        });
-
-    });
-
-    //console.log('->',stockObject);
-
-    //console.log(collection);
-
-    let po = new PurchaseOrderModel({
+    let po = new CustomerTransaction({
         customer: req.body[0].customer,
     });
 
     let poPromise = await po.save()
 
-    let ct = new CustomerTransaction({
-        payment: req.body[0].payment,
-        customer: req.body[0].customer,
-    });
+    console.log('---->', poPromise);
 
-    let ctPromise = await ct.save()
+        /*.then(data => {
+            console.log(data);
+            //res.send(data);
+        })*/
 
-    req.body.every((sellData, ind)=>{
 
+    req.body.forEach((sellData)=>{
         let sell = new Sell({
             //name: sellData.name,
-            purchaseOrder: poPromise._id,
             customer: sellData.customer,
             product: sellData.product,
             quantity: sellData.quantity,
@@ -88,10 +59,12 @@ router.post('/', async (req, res)=>{
 
         sell.save().then(data => {
             //console.log(data);
-            res.json(data);
+            res.send(data);
         })
-
     });
+
+
+
 
 });
 

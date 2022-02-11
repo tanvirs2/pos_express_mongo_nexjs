@@ -6,7 +6,8 @@ const Customer = require('../models/Customer');
 router.get('/', async (req, res) => {
 
     try {
-        const customer = await Customer.find();
+        const customer = await Customer.find()
+            //.populate('');
         res.json(customer);
     } catch (err) {
         res.json({massage: err});

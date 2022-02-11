@@ -6,6 +6,9 @@ const CustomerSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    organizationName: {
+        type: String,
+    },
     address: {
         type: String
     },
