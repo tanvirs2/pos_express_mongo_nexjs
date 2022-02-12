@@ -15,24 +15,22 @@ import Link from "next/link";
 export default function Navigation() {
   return (
     <header>
-      <Container fluid>
-        <Navbar variant="light" expand="md">
-          <Navbar.Brand className="pt-3">
-            <Link href="/">
-              <a>
-                <Image
+      <Navbar variant="light" expand="md">
+        <Navbar.Brand className="pt-3 ps-2">
+          <Link href="/">
+            <a>
+              <Image
                   src="/logo-ipsum.png"
                   alt="Grouparoo Logo"
                   width={150}
                   height={80}
-                />
-              </a>
-            </Link>
-            <span className="d-none">Company</span>
-          </Navbar.Brand>
+              />
+            </a>
+          </Link>
+          <span className="d-none">Company</span>
+        </Navbar.Brand>
 
-        </Navbar>
-      </Container>
+      </Navbar>
     </header>
   );
 }

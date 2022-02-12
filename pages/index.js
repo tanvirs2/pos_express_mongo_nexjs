@@ -18,7 +18,7 @@ export default function Home() {
       <main>
 
         <Container>
-          <Row className="row-cols-1 row-cols-md-2 row-cols-xl-3">
+          <Row className="row-cols-1 row-cols-md-2 row-cols-xl-3 pt-5">
             <Col className="mb-4">
 
               <BigMenu compData={{name:"Category", link: "/category"}}/>

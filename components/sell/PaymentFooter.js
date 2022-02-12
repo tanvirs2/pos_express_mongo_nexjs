@@ -9,7 +9,7 @@ const PaymentFooter = forwardRef((props, ref) => {
 
 
     return (
-        <div className="bg-secondary text-white position-absolute w-100 fixed-bottom">
+        <div className="bg-secondary text-white position-absolute w-100">
             <div className="row pt-3">
 
                 <Col md={{ span: 2, offset: 1 }}>

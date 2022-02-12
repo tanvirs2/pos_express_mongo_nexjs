@@ -315,7 +315,6 @@ export default function Sell() {
                     <Row>
                         <Col>
                             <h1>{moduleLang.name}</h1>
-                            <p>{moduleLang.pageNameDescription}</p>
                         </Col>
                     </Row>
 

@@ -95,7 +95,8 @@ function ChildTR(props) {
 export function POSRow(props){
 
     return (
-        <div className="col overflow-auto" style={{height: '40vh'}}>
+        <div className="col overflow-auto" style={{height: '49vh'}}>
+
             {/* Keeps count of product rows */}
 
             <table className="table table-condensed table-bordered table-striped table-responsive">
