@@ -68,13 +68,17 @@ router.post('/', async (req, res)=>{
     let poPromise = await po.save()
 
     let ct = new CustomerTransaction({
+        due: (req.body[0].payable) - (req.body[0].payment),
         payment: req.body[0].payment,
+        payable: req.body[0].payable,
         customer: req.body[0].customer,
     });
 
     let ctPromise = await ct.save()
 
-    req.body.every((sellData, ind)=>{
+    req.body.forEach((sellData, ind)=>{
+
+        //console.log(sellData);
 
         let sell = new Sell({
             //name: sellData.name,

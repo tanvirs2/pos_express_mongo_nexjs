@@ -53,6 +53,7 @@ router.post('/', (req, res)=>{
         name: req.body.name,
         phone: req.body.phone,
         email: req.body.email,
+        organizationName: req.body.organizationName,
         address: req.body.address,
         description: req.body.description,
     });

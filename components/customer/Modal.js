@@ -40,6 +40,7 @@ export default function ModalComp(props) {
                 name: form.current.name.value,
                 phone: form.current.phone.value,
                 email: form.current.email.value,
+                organizationName: form.current.organizationName.value,
                 address: form.current.address.value,
                 description: form.current.description.value,
             }),
@@ -79,6 +80,7 @@ export default function ModalComp(props) {
                 name: form.current.name.value,
                 phone: form.current.phone.value,
                 email: form.current.email.value,
+                organizationName: form.current.organizationName.value,
                 address: form.current.address.value,
                 description: form.current.description.value,
             }),
@@ -118,6 +120,7 @@ export default function ModalComp(props) {
                        form.current.name.value = (props.customerData.name) ? props.customerData.name : '';
                        form.current.phone.value = (props.customerData.phone) ? props.customerData.phone : '';
                        form.current.email.value = (props.customerData.email) ? props.customerData.email : '';
+                       form.current.organizationName.value = (props.customerData.organizationName) ? props.customerData.organizationName : '';
                        form.current.address.value = (props.customerData.address) ? props.customerData.address : '';
                        form.current.description.value = (props.customerData.description) ? props.customerData.description : '';
 
@@ -144,6 +147,11 @@ export default function ModalComp(props) {
                         <Form.Group className="mb-3">
                             <Form.Label>Customer Email</Form.Label>
                             <Form.Control type="email" placeholder="Type email" name="email"/>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Organization</Form.Label>
+                            <Form.Control type="text" placeholder="Type Organization Name" name="organizationName"/>
                         </Form.Group>
 
                         <br/>

@@ -22,6 +22,7 @@ export function sellingSummeryProcessFunc() {
 
 
     document.querySelector('#summery_line_total').innerHTML = pos_line_total;
+    document.querySelector('#payable_field').value = pos_line_total;
 
 }
 

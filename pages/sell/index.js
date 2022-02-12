@@ -37,6 +37,7 @@ export default function Sell() {
     //let sellForm = useRef();
 
     const [selectedCustomerForSell, setSelectedCustomerForSell] = useState(null);
+    const [selectedCustomerDue, setSelectedCustomerDue] = useState(null);
     const [purchaseOrders, setPurchaseOrder] = useState([]);
     const [stocks, setStocks] = useState([]);
     const [itemRow, setItemRow] = useState([]);
@@ -56,6 +57,7 @@ export default function Sell() {
         setStocksProducts([]);
         selectRef.current.clearValue()
         selectRef2.current.clearValue()
+        setSelectedCustomerDue(null);
         setRefreshPage(++refreshCount);
     }
 
@@ -187,9 +189,13 @@ export default function Sell() {
         //console.log(customer.id);
         fetch(hostApiCustomerTransaction+customer.id)
             .then(response=> response.json())
-            .then(datas=>{
+            .then(customerTransactionDatas=>{
 
-                console.log('------->', datas)
+                //console.log('------->', collect(customerTransactionDatas).sum('due'), customerTransactionDatas)
+
+                let due = collect(customerTransactionDatas).sum('due')
+
+                setSelectedCustomerDue(due);
 
             });
     }
@@ -241,6 +247,7 @@ export default function Sell() {
 
         let customers = selectedCustomerForSell.id;
         let payment = sellFormRow.payment.value;
+        let payable = sellFormRow.payable.value;
 
         let bodyData = quantityRow.map((data, index)=>{
 
@@ -253,7 +260,7 @@ export default function Sell() {
             return {
                 customer: customers, // get customer from outside of this block
                 payment, // get payment from outside of this block
-
+                payable,
                 product: products,
                 quantity: quantities,
                 price: prices,
@@ -291,6 +298,8 @@ export default function Sell() {
                 'success'
             )
             refreshComponent();
+            sellFormRow.payment.value = '';
+            sellFormRow.payable.value = '';
         }
 
         //console.log('---->',sellDone);
@@ -466,7 +475,7 @@ export default function Sell() {
                                                                         <tbody>
                                                                             <tr>
                                                                                 <th className="bg-dark text-white px-1" style={{width: "10px"}}>Due:</th>
-                                                                                <td className="ps-1">100000</td>
+                                                                                <td className="ps-1">{selectedCustomerDue}</td>
                                                                             </tr>
 
                                                                         </tbody>

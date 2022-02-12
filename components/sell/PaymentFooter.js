@@ -31,6 +31,7 @@ const PaymentFooter = forwardRef((props, ref) => {
 
                 <Col md={{ span: 3, offset: 2 }}>
                     Total Payable: <br/>
+                    <input className="form-control" id="payable_field" type="hidden" name="payable"/>
                     <div id="summery_line_total">0</div>
                 </Col>
 
