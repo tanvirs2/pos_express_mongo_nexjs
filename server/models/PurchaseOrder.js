@@ -7,6 +7,11 @@ const PurchaseOrder = mongoose.Schema({
         required: false,
         default: 'not set'
     },
+    chalanNo: {
+        type: String,
+        required: true,
+        default: 'not set'
+    },
     product: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Product'
