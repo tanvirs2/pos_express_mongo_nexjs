@@ -56,6 +56,7 @@ router.post('/', (req, res)=>{
         price: req.body.price,
         description: req.body.description,
         category: req.body.category,
+        unitType: req.body.unitType,
     });
 
     product.save().then(data => {

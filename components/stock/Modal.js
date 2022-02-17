@@ -137,8 +137,8 @@ export default function ModalComp(props) {
 
                     <Form ref={form}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Stock Name</Form.Label>
-                            <Form.Control type="text" placeholder="Type stock" name="name"/>
+                            <Form.Label>Supplier Name</Form.Label>
+                            <Form.Control type="text" placeholder="Type Supplier name" name="name"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3">

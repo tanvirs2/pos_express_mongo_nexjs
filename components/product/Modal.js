@@ -37,7 +37,7 @@ export default function ModalComp(props) {
         //alert('dsa');
 
         //setProduct([]);
-        //console.log(form.current.name.value)
+        console.log(form.current.name.value)
 
         event.preventDefault()
 
@@ -45,6 +45,7 @@ export default function ModalComp(props) {
             body: JSON.stringify({
                 name: form.current.name.value,
                 price: form.current.price.value,
+                unitType: form.current.unitType.value,
                 description: form.current.description.value,
                 category: form.current.category.value,
             }),
@@ -82,7 +83,10 @@ export default function ModalComp(props) {
         const res = await fetch(hostApi+props.productData._id, {
             body: JSON.stringify({
                 name: form.current.name.value,
+                price: form.current.price.value,
+                unitType: form.current.unitType.value,
                 description: form.current.description.value,
+                category: form.current.category.value,
             }),
             headers: {
                 'Content-Type': 'application/json'
@@ -118,6 +122,9 @@ export default function ModalComp(props) {
                    onShow={()=>{
                        //console.log(form.current);
                        form.current.name.value = (props.productData.name) ? props.productData.name : '';
+                       form.current.price.value = (props.productData.price) ? props.productData.price : '';
+                       form.current.unitType.value = (props.productData.unitType) ? props.productData.unitType : '';
+                       form.current.category.value = (props.productData.category) ? props.productData.category : '';
                        form.current.description.value = (props.productData.description) ? props.productData.description : '';
 
                    }}
@@ -138,6 +145,18 @@ export default function ModalComp(props) {
                         <Form.Group className="mb-3">
                             <Form.Label>Product Price</Form.Label>
                             <Form.Control type="text" placeholder="Type Price" name="price"/>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Product Unit type</Form.Label>
+                            <Form.Select aria-label="Unit Type" name="unitType">
+                                <option>Open this Unit Type menu</option>
+
+                                <option value='bag'>Bag</option>
+                                <option value='kg'>kg</option>
+                                <option value='pound'>pound</option>
+
+                            </Form.Select>
                         </Form.Group>
 
                         <br/>

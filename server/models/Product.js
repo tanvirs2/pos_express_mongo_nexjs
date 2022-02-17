@@ -8,7 +8,7 @@ const ProductSchema = mongoose.Schema({
     },
     code: {
         type: String,
-        required: true
+        required: false
     },
     price: { //selling price
         type: Number,
@@ -16,6 +16,12 @@ const ProductSchema = mongoose.Schema({
     },
     picture: {
         type: String,
+    },
+    unitType: {
+        type: String,
+        enum: ['bag', 'kg', 'pound'],
+        required: true,
+        default: 'bag'
     },
     status: {
         type: String,
