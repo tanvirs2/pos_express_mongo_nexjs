@@ -1,20 +1,20 @@
 import {Col, Container, Form, Modal, Button, Row, Table} from "react-bootstrap";
 import Swal from 'sweetalert2'
 import React, {useState, useRef, useEffect} from "react";
-import ModalComp from '../../components/customer/Modal';
+import ModalComp from '../../components/supplier/Modal';
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
-const hostApi = host+'/customer/';
+const hostApi = host+'/suppliers/';
 
 
 
-export default function Customer() {
+export default function Supplier() {
 
     //console.log('tnv', process.env.NEXT_PUBLIC_HOSTNAME);
 
     const [show, setShow] = useState(false);
-    const [customers, setCustomers] = useState([]);
-    const [customer, setCustomer] = useState('');
+    const [suppliers, setSuppliers] = useState([]);
+    const [supplier, setSupplier] = useState('');
 
     useEffect(()=>{
         console.log(hostApi)
@@ -22,7 +22,7 @@ export default function Customer() {
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setCustomers(data);
+                setSuppliers(data);
             });
     }, []);
 
@@ -32,7 +32,7 @@ export default function Customer() {
             .then(response=>response.json())
             .then(data=>{
                 console.log(data);
-                setCustomers(data);
+                setSuppliers(data);
             });
 
     }
@@ -40,12 +40,12 @@ export default function Customer() {
 
     const handleClose = () => setShow(false);
 
-    const handleShow = (customer = {}) => {
+    const handleShow = (supplier = {}) => {
         setShow(true)
-        setCustomer(customer)
+        setSupplier(supplier)
     };
 
-    const handleDeleteCustomer = (customer_id) => {
+    const handleDeleteCustomer = (supplier_id) => {
 
         Swal.fire({
             title: 'Are you sure?',
@@ -58,7 +58,7 @@ export default function Customer() {
         }).then((result) => {
             if (result.isConfirmed) {
 
-                fetch(hostApi+customer_id, {
+                fetch(hostApi+supplier_id, {
                     method: 'DELETE'
                 })
                 .then(res => res.json()) // or res.json()
@@ -83,13 +83,13 @@ export default function Customer() {
 
     return (
         <>
-            <ModalComp modalShowOrNot={show} handleClose={handleClose} customerData={customer} updateCustomerList={updateCustomerList}/>
+            <ModalComp modalShowOrNot={show} handleClose={handleClose} supplierData={supplier} updateCustomerList={updateCustomerList}/>
 
             <Container>
                 <Row>
                     <Col>
-                        <h1>Customer</h1>
-                        <p>This is the customer page.</p>
+                        <h1>Supplier</h1>
+                        <p>This is the supplier page.</p>
                     </Col>
                 </Row>
 
@@ -100,7 +100,7 @@ export default function Customer() {
                                 <header className="card-header"><h6 className="title">Action</h6></header>
                                 <div className="filter-content">
                                     <div className="list-group list-group-flush">
-                                        <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create customer </span>
+                                        <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create supplier </span>
 
                                     </div>
                                     {/*list-group .*/}
@@ -118,7 +118,7 @@ export default function Customer() {
 
                             <article className="card-group-item">
 
-                                <header className="card-header"><h6 className="title">Customer List</h6></header>
+                                <header className="card-header"><h6 className="title">Supplier List</h6></header>
 
                                 <div className="filter-content">
 
@@ -138,24 +138,24 @@ export default function Customer() {
                                             </thead>
                                             <tbody>
 
-                                            {customers.map(customer=>{
+                                            {suppliers.map(supplier=>{
                                                 return (
-                                                    <tr key={customer._id}>
+                                                    <tr key={supplier._id}>
                                                         <td>0</td>
-                                                        <td>{customer.name}</td>
+                                                        <td>{supplier.name}</td>
 
-                                                        <td>{customer.price}</td>
-                                                        <td>{customer.category ? <span className="text-danger">({customer.category.name})</span>: ''}</td>
+                                                        <td>{supplier.price}</td>
+                                                        <td>{supplier.category ? <span className="text-danger">({supplier.category.name})</span>: ''}</td>
 
                                                         <td>
                                                         <span className="">
 
                                                             <Button variant={"success"} className="mx-1" onClick={()=>{
-                                                                handleShow(customer)
+                                                                handleShow(supplier)
                                                             }}>Edit</Button>
 
                                                             <Button variant={"danger"} onClick={()=>{
-                                                                handleDeleteCustomer(customer._id)
+                                                                handleDeleteCustomer(supplier._id)
                                                             }}>Delete</Button>
                                                         </span>
                                                         </td>

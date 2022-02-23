@@ -9,6 +9,7 @@ const sellRoute = require('./routes/sell');
 const customerRoute = require('./routes/customer');
 const purchaseOrder = require('./routes/purchaseOrder');
 const customerTransaction = require('./routes/customerTransaction');
+const supplierRoute = require('./routes/supplier');
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
@@ -31,6 +32,7 @@ app.prepare().then(() => {
     prefixApiRoute('/customer', customerRoute);
     prefixApiRoute('/purchaseOrder', purchaseOrder);
     prefixApiRoute('/customerTransaction', customerTransaction);
+    prefixApiRoute('/suppliers', supplierRoute());
     /*routes*/
 
     server.get('/api22', (req, res) => {

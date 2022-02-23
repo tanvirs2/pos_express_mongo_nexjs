@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Customer = require('../models/Customer');
+const Supplier = require('../models/Supplier');
 
 
 router.get('/', async (req, res) => {
 
     try {
-        const customer = await Customer.find()
+        const supplier = await Supplier.find()
             //.populate('');
-        res.json(customer);
+        res.json(supplier);
     } catch (err) {
         res.json({massage: err});
     }
@@ -18,8 +18,8 @@ router.get('/', async (req, res) => {
 router.get('/:customerId', async (req, res) => {
 
     try {
-        const customer = await Customer.find();
-        res.json(customer);
+        const supplier = await Supplier.find();
+        res.json(supplier);
     } catch (err) {
         res.json({massage: err});
     }
@@ -31,9 +31,9 @@ router.get('/customerName/:customerName', async (req, res) => {
     try {
         let colName= req.params.customerName;
 
-        const customer = await Customer.find({ name: { $regex: new RegExp(`.*${colName}.*`), $options: 'i' } });
+        const supplier = await Supplier.find({ name: { $regex: new RegExp(`.*${colName}.*`), $options: 'i' } });
 
-        res.json(customer);
+        res.json(supplier);
     } catch (err) {
         res.json({massage: err});
     }
@@ -41,7 +41,7 @@ router.get('/customerName/:customerName', async (req, res) => {
 });
 
 
-// save customer
+// save supplier
 router.post('/', (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
@@ -49,7 +49,7 @@ router.post('/', (req, res)=>{
     console.log('tttttttttttttt',req.body);
 
 
-    const customer = new Customer({
+    const supplier = new Supplier({
         name: req.body.name,
         phone: req.body.phone,
         email: req.body.email,
@@ -58,7 +58,7 @@ router.post('/', (req, res)=>{
         description: req.body.description,
     });
 
-    customer.save().then(data => {
+    supplier.save().then(data => {
         console.log(data);
         res.send(data);
     })
@@ -74,21 +74,19 @@ router.put('/:customerId', async (req, res)=>{
     //console.log('tnv',req.params.customerId);
 
     try {
-        const customer = await Customer.updateOne({_id: req.params.customerId}, req.body);
-        res.json(customer);
+        const supplier = await Supplier.updateOne({_id: req.params.customerId}, req.body);
+        res.json(supplier);
     } catch (err){
         res.json({massage: err});
     }
 
-
-
 });
 
-// delete customer
+// delete supplier
 router.delete('/:customerId', async (req, res)=>{
 
     try {
-        let customerDel = await Customer.remove({_id: req.params.customerId});
+        let customerDel = await Supplier.remove({_id: req.params.customerId});
         res.json(customerDel);
     } catch (err){
         res.json({massage: err});

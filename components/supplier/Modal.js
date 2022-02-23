@@ -4,13 +4,13 @@ import {Button, Form, Modal} from "react-bootstrap";
 import appLanguage from "../../utilities/language";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
-const hostApi = host+'/customer/';
+const hostApi = host+'/supplier/';
 
-let moduleLang = appLanguage.customerModule;
+let moduleLang = appLanguage.supplierModule;
 
 export default function ModalComp(props) {
 
-    const [customer, setCustomer] = useState('');
+    const [supplier, setCustomer] = useState('');
     let form = useRef(null);
 
     useEffect(() => {
@@ -18,9 +18,9 @@ export default function ModalComp(props) {
         //form.current.name.value = 'ddd'
         //console.log(form.current);
 
-        setCustomer(props.customerData);
+        setCustomer(props.supplierData);
 
-    }, [customer]);
+    }, [supplier]);
 
     const handleClose = () => {
         props.handleClose();
@@ -73,9 +73,9 @@ export default function ModalComp(props) {
 
         event.preventDefault()
 
-        console.log(props.customerData._id);
+        console.log(props.supplierData._id);
 
-        const res = await fetch(hostApi+props.customerData._id, {
+        const res = await fetch(hostApi+props.supplierData._id, {
             body: JSON.stringify({
                 name: form.current.name.value,
                 phone: form.current.phone.value,
@@ -117,26 +117,26 @@ export default function ModalComp(props) {
                    centered
                    onShow={()=>{
                        //console.log(form.current);
-                       form.current.name.value = (props.customerData.name) ? props.customerData.name : '';
-                       form.current.phone.value = (props.customerData.phone) ? props.customerData.phone : '';
-                       form.current.email.value = (props.customerData.email) ? props.customerData.email : '';
-                       form.current.organizationName.value = (props.customerData.organizationName) ? props.customerData.organizationName : '';
-                       form.current.address.value = (props.customerData.address) ? props.customerData.address : '';
-                       form.current.description.value = (props.customerData.description) ? props.customerData.description : '';
+                       form.current.name.value = (props.supplierData.name) ? props.supplierData.name : '';
+                       form.current.phone.value = (props.supplierData.phone) ? props.supplierData.phone : '';
+                       form.current.email.value = (props.supplierData.email) ? props.supplierData.email : '';
+                       form.current.organizationName.value = (props.supplierData.organizationName) ? props.supplierData.organizationName : '';
+                       form.current.address.value = (props.supplierData.address) ? props.supplierData.address : '';
+                       form.current.description.value = (props.supplierData.description) ? props.supplierData.description : '';
 
                    }}
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Create customer</Modal.Title>
+                    <Modal.Title>Create supplier</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
 
                     <Form ref={form}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Customer Name</Form.Label>
-                            <Form.Control type="text" placeholder="Type customer" name="name"/>
+                            <Form.Label>Supplier Name</Form.Label>
+                            <Form.Control type="text" placeholder="Type supplier" name="name"/>
                         </Form.Group>
 
                         <Form.Group className="mb-3">
@@ -145,7 +145,7 @@ export default function ModalComp(props) {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Customer Email</Form.Label>
+                            <Form.Label>Supplier Email</Form.Label>
                             <Form.Control type="email" placeholder="Type email" name="email"/>
                         </Form.Group>
 
@@ -175,10 +175,10 @@ export default function ModalComp(props) {
                         Close
                     </Button>
                     {
-                        props.customerData._id ? <Button variant="warning" onClick={handleUpdateData}>
-                            Update customer
+                        props.supplierData._id ? <Button variant="warning" onClick={handleUpdateData}>
+                            Update supplier
                         </Button> : <Button variant="primary" onClick={handleSubmitData}>
-                            Save customer
+                            Save supplier
                         </Button>
                     }
 
