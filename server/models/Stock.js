@@ -6,13 +6,17 @@ const StockSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    product: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "Product"
+    },
     supplier: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'Supplier',
     },
-    product: {
+    supplierPurchaseOrder: {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: "Product"
+        ref: 'Supplier_Purchase_Order'
     },
     quantityPurchased: {
         type: Number,
