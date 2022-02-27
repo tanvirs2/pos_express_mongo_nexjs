@@ -6,7 +6,7 @@ const Stock = require('../models/Stock');
 router.get('/', async (req, res) => {
 
     try {
-        const stock = await Stock.find().populate('product');
+        const stock = await Stock.find().populate('product').populate('supplier');
         res.json(stock);
     } catch (err) {
         res.json({massage: err});
@@ -33,6 +33,7 @@ router.post('/', (req, res)=>{
 
     const stock = new Stock({
         name: req.body.name,
+        supplier: req.body.supplier,
         description: req.body.description,
         quantityPurchased: req.body.quantityPurchased,
         quantityStock: req.body.quantityPurchased,

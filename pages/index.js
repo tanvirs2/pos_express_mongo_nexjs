@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import React, {Fragment} from "react";
 import {
   Button,
   Container,
@@ -9,51 +10,30 @@ import {
 } from "react-bootstrap";
 import "../components/icons";
 import BigMenu from "../components/layouts/big_menu";
+import menus from "../utilities/menu";
 
 
 export default function Home() {
   return (
-    <>
+    <Fragment>
 
       <main>
 
         <Container>
           <Row className="row-cols-1 row-cols-md-2 row-cols-xl-3 pt-5">
-            <Col className="mb-4">
+            {
+              menus.map((menu, index)=>{
+                return (
+                    <Col key={index} className="mb-4">
 
-              <BigMenu compData={{name:"Category", link: "/category"}}/>
+                      <BigMenu compData={{...menu}}/>
 
-            </Col>
+                    </Col>
+                );
+              })
+            }
 
-            <Col className="mb-4">
 
-              <BigMenu compData={{name:"Product", link: "/product"}}/>
-
-            </Col>
-
-            <Col className="mb-4">
-
-              <BigMenu compData={{name:"Stock", link: "/stock"}}/>
-
-            </Col>
-
-            <Col className="mb-4 offset-md-3 offset-xl-0">
-
-              <BigMenu compData={{name:"Customer", link: "/customer"}}/>
-
-            </Col>
-
-            <Col className="mb-4 offset-md-3 offset-xl-0">
-
-              <BigMenu compData={{name:"Supplier", link: "/supplier"}}/>
-
-            </Col>
-
-            <Col className="mb-4 offset-md-3 offset-xl-0">
-
-              <BigMenu compData={{name:"Sell", link: "/sell"}}/>
-
-            </Col>
           </Row>
         </Container>
 
@@ -66,6 +46,6 @@ export default function Home() {
           </span>
         </div>
       </footer>
-    </>
+    </Fragment>
   );
 }

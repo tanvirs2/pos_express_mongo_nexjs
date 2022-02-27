@@ -4,7 +4,7 @@ import {Button, Form, Modal} from "react-bootstrap";
 import appLanguage from "../../utilities/language";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
-const hostApi = host+'/supplier/';
+const hostApi = host+'/suppliers/';
 
 let moduleLang = appLanguage.supplierModule;
 
@@ -31,7 +31,7 @@ export default function ModalComp(props) {
         //alert('dsa');
 
         //setCustomer([]);
-        //console.log(form.current.name.value)
+        console.log('-->',form.current.name.value)
 
         event.preventDefault()
 
@@ -53,6 +53,7 @@ export default function ModalComp(props) {
         const result = await res.json()
 
         //console.log('tncccccccccc', form.current.price.value)
+        //console.log('tncccccccccc', res)
 
         props.updateCustomerList();
         handleClose()

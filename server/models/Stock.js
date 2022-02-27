@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 const StockSchema = mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: false
+    },
+    supplier: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'Supplier',
     },
     product: {
         type: mongoose.SchemaTypes.ObjectId,

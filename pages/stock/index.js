@@ -141,7 +141,7 @@ export default function Stock() {
                                                 return (
                                                     <tr key={stock._id}>
                                                         <td>0</td>
-                                                        <td>{stock.name}</td>
+                                                        <td>{stock.supplier.name}</td>
                                                         <td>{stock.product.name}</td>
 
                                                         <td>{stock.unitPrice}</td>

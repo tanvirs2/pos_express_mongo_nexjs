@@ -6,6 +6,7 @@ import {Menu, MenuItem, ProSidebar, SidebarContent, SidebarFooter, SidebarHeader
 import {FaEllipsisH, FaEllipsisV, FaGem, FaHeart} from "react-icons/fa";
 import {useState} from "react";
 import Link from "next/link";
+import menus from "../../utilities/menu";
 
 function PageTemplate({ children }) {
   const router = useRouter();
@@ -36,7 +37,9 @@ function PageTemplate({ children }) {
                                 <SidebarHeader>
                                     <div className="w-100 bg-secondary bg-opacity-10 text-white">
                                         <a className="ms-4">{
-                                            sidebarCollapse ? <FaEllipsisH onClick={handleSidebarCollapse}/> :
+                                            sidebarCollapse ?
+                                                <FaEllipsisH onClick={handleSidebarCollapse}/>
+                                                :
                                                 <FaEllipsisV onClick={handleSidebarCollapse}/>
                                         }</a>
                                     </div>
@@ -51,54 +54,27 @@ function PageTemplate({ children }) {
                                      */}
                                     <Menu iconShape="square">
                                         <MenuItem icon={<FaGem/>}>
-                                            <MenuItem>
-                                                <Link href="/">
-                                                    <a>
-                                                        Dashboard
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
+                                            <Link href="/">
+                                                <a>
+                                                    Dashboard
+                                                </a>
+                                            </Link>
                                         </MenuItem>
                                         <SubMenu title="Modules" icon={<FaHeart/>}>
-                                            <MenuItem>
-                                                <Link href="/sell">
-                                                    <a>
-                                                        Sell
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
 
-                                            <MenuItem>
-                                                <Link href="/category">
-                                                    <a>
-                                                        Category
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
-
-                                            <MenuItem>
-                                                <Link href="/product">
-                                                    <a>
-                                                        Product
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
-
-                                            <MenuItem>
-                                                <Link href="/stock">
-                                                    <a>
-                                                        Stock
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
-
-                                            <MenuItem>
-                                                <Link href="/customer">
-                                                    <a>
-                                                        Customer
-                                                    </a>
-                                                </Link>
-                                            </MenuItem>
+                                            {
+                                                menus.map((menu, index)=>{
+                                                    return (
+                                                        <MenuItem key={index}>
+                                                            <Link href={menu.link}>
+                                                                <a>
+                                                                    {menu.name}
+                                                                </a>
+                                                            </Link>
+                                                        </MenuItem>
+                                                    )
+                                                })
+                                            }
 
                                         </SubMenu>
                                     </Menu>

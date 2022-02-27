@@ -5,16 +5,17 @@ import {Button, Form, Modal} from "react-bootstrap";
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/stock/';
 const belongProductsHostApi = host+'/products/';
+const belongSupplierHostApi = host+'/suppliers/';
 
 export default function ModalComp(props) {
 
     const [stock, setStock] = useState('');
     const [products, setProducts] = useState([]);
+    const [allSuppliers, setAllSuppliers] = useState([]);
     let form = useRef(null);
 
     useEffect(() => {
 
-        //form.current.name.value = 'ddd'
         console.log('before', form.current);
 
         fetch(belongProductsHostApi)
@@ -22,6 +23,13 @@ export default function ModalComp(props) {
             .then(products=>{
                 //console.log(data);
                 setProducts(products); // get Products for Products select option
+            });
+
+        fetch(belongSupplierHostApi)
+            .then(response=>response.json())
+            .then(suppliers=>{
+                console.log('---suppliers--->', suppliers);
+                setAllSuppliers(suppliers); // get Products for Products select option
             });
 
         setStock(props.stockData);
@@ -44,9 +52,14 @@ export default function ModalComp(props) {
 
         event.preventDefault()
 
+        //console.log(form.current.supplier.value);
+
+        //return;
+
         const res = await fetch(hostApi, {
             body: JSON.stringify({
                 name: form.current.name.value,
+                supplier: form.current.supplier.value,
                 description: form.current.description.value,
                 quantityPurchased: form.current.quantityPurchased.value,
                 unitPrice: form.current.unitPrice.value,
@@ -84,6 +97,7 @@ export default function ModalComp(props) {
         const res = await fetch(hostApi+props.stockData._id, {
             body: JSON.stringify({
                 name: form.current.name.value,
+                supplier: form.current.supplier.value,
                 description: form.current.description.value,
                 quantityPurchased: form.current.quantityPurchased.value,
                 unitPrice: form.current.unitPrice.value,
@@ -121,7 +135,8 @@ export default function ModalComp(props) {
                    centered
                    onShow={()=>{
                        //console.log(form.current);
-                       form.current.name.value = (props.stockData.name) ? props.stockData.name : '';
+                       //form.current.name.value = (props.stockData.name) ? props.stockData.name : '';
+                       form.current.supplier.value = (props.stockData.supplier) ? props.stockData.supplier : '';
                        form.current.description.value = (props.stockData.description) ? props.stockData.description : '';
                        form.current.quantityPurchased.value = (props.stockData.quantityPurchased) ? props.stockData.quantityPurchased : '';
                        form.current.unitPrice.value = (props.stockData.unitPrice) ? props.stockData.unitPrice : '';
@@ -138,7 +153,19 @@ export default function ModalComp(props) {
                     <Form ref={form}>
                         <Form.Group className="mb-3">
                             <Form.Label>Supplier Name</Form.Label>
-                            <Form.Control type="text" placeholder="Type Supplier name" name="name"/>
+
+                            <Form.Select aria-label="Default select example" name="supplier">
+                                <option>Open this select menu</option>
+
+                                {
+                                    allSuppliers.map(supplier=>{
+                                        return (
+                                            <option key={supplier._id} value={supplier._id}>{supplier.name}</option>
+                                        )
+                                    })
+                                }
+
+                            </Form.Select>
                         </Form.Group>
 
                         <Form.Group className="mb-3">
