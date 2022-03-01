@@ -1,6 +1,7 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {Fragment, useEffect, useRef, useState} from "react";
 import Swal from "sweetalert2";
-import {Button, Form, Modal} from "react-bootstrap";
+import {Button, Form, Modal, Nav} from "react-bootstrap";
+import Cookies from 'js-cookie'
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/stock/';
@@ -12,6 +13,8 @@ export default function ModalComp(props) {
     const [stock, setStock] = useState('');
     const [products, setProducts] = useState([]);
     const [allSuppliers, setAllSuppliers] = useState([]);
+    const [dynamicInputFields, setDynamicInputFields] = useState([]);
+    const [cooKiePanelType, setCooKiePanelType] = useState( Cookies.get('panelType') );
     let form = useRef(null);
 
     useEffect(() => {
@@ -33,6 +36,12 @@ export default function ModalComp(props) {
             });
 
         setStock(props.stockData);
+
+        if (Cookies.get('panelType') === undefined) {
+
+            handleInputPanel({panelType: 'single'});
+
+        }
 
         return () => {
             console.log('after', form.current);
@@ -126,11 +135,18 @@ export default function ModalComp(props) {
     };
 
 
+    const handleInputPanel = (panel) => {
+        //console.log(Cookies.get('panelTypes'))
+        setCooKiePanelType(panel.panelType);
+        Cookies.set('panelType', panel.panelType)
+    }
+
+    console.log('dd');
 
     return (
         <>
             <Modal show={props.modalShowOrNot} onHide={handleClose}
-                   size="lg"
+                   size="xl"
                    aria-labelledby="contained-modal-title-vcenter"
                    centered
                    onShow={()=>{
@@ -145,7 +161,23 @@ export default function ModalComp(props) {
             >
 
                 <Modal.Header closeButton>
-                    <Modal.Title>Create stock</Modal.Title>
+                    <Modal.Title>Create stock</Modal.Title> &nbsp;&nbsp;&nbsp;
+
+                    <Nav variant="pills" defaultActiveKey={Cookies.get('panelType')}>
+
+                        <Nav.Item>
+                            <Nav.Link eventKey="single" onClick={()=>{
+                                handleInputPanel({panelType: 'single'})
+                            }}>Single</Nav.Link>
+                        </Nav.Item>
+
+                        <Nav.Item>
+                            <Nav.Link eventKey="multi" onClick={()=>{
+                                handleInputPanel({panelType: 'multi'})
+                            }}>Multi</Nav.Link>
+                        </Nav.Item>
+
+                    </Nav>
                 </Modal.Header>
 
                 <Modal.Body>
@@ -168,30 +200,90 @@ export default function ModalComp(props) {
                             </Form.Select>
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Quantity</Form.Label>
-                            <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
-                        </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
-                        </Form.Group>
+                        {cooKiePanelType === 'single' ? (<Fragment>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Quantity</Form.Label>
+                                        <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Price</Form.Label>
+                                        <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
+                                    </Form.Group>
 
 
-                        <Form.Label>Product</Form.Label>
-                        <Form.Select aria-label="Default select example" name="product">
-                            <option>Open this select menu</option>
+                                    <Form.Label>Product</Form.Label>
+                                    <Form.Select aria-label="Default select example" name="product">
+                                        <option>Open this select menu</option>
 
-                            {
-                                products.map(product=>{
-                                    return (
-                                        <option key={product._id} value={product._id}>{product.name}</option>
-                                    )
-                                })
-                            }
+                                        {
+                                            products.map(product=>{
+                                                return (
+                                                    <option key={product._id} value={product._id}>{product.name}</option>
+                                                )
+                                            })
+                                        }
 
-                        </Form.Select>
+                                    </Form.Select>
+                            </Fragment>)
+                            :
+                            (<Fragment>
+
+                                {/* dynamic */}
+
+                                <Button onClick={()=>{
+                                    setDynamicInputFields([...dynamicInputFields, {}])
+                                }}>Add</Button>
+
+                                {
+                                    dynamicInputFields.map((fields, index,thisArray)=>{
+
+                                        return <div key={index}> {index} dd
+                                            <Button onClick={()=>{
+
+                                                //console.log(index, thisArray, index)
+
+                                                thisArray.splice(index, 1)
+
+                                                setDynamicInputFields([...thisArray])
+
+                                            }}>del</Button>
+                                        </div>
+
+                                    })
+                                }
+
+                                {/* dynamic */}
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Quantity</Form.Label>
+                                    <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
+                                </Form.Group>
+
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Price</Form.Label>
+                                    <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
+                                </Form.Group>
+
+
+                                <Form.Label>Product</Form.Label>
+                                <Form.Select aria-label="Default select example" name="product">
+                                    <option>Open this select menu</option>
+
+                                    {
+                                        products.map(product=>{
+                                            return (
+                                                <option key={product._id} value={product._id}>{product.name}</option>
+                                            )
+                                        })
+                                    }
+
+                                </Form.Select>
+                            </Fragment>)
+                        }
+
+
 
                         <br/>
 
