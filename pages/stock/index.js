@@ -19,7 +19,7 @@ export default function Stock() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+                //console.log(data);
                 setStocks(data);
             });
     }, []);
@@ -29,7 +29,7 @@ export default function Stock() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+                //console.log(data);
                 setStocks(data);
             });
 
@@ -61,7 +61,7 @@ export default function Stock() {
                 })
                     .then(res => res.json()) // or res.json()
                     .then(res => {
-                        console.log(res)
+                        //console.log(res)
                         updateStockList();
                     });
 

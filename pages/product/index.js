@@ -20,7 +20,7 @@ export default function Product() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setProducts(data);
             });
     }, []);
@@ -30,7 +30,7 @@ export default function Product() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setProducts(data);
             });
 
@@ -62,7 +62,7 @@ export default function Product() {
                 })
                 .then(res => res.json()) // or res.json()
                 .then(res => {
-                    console.log(res)
+                   //console.log(res)
                     updateProductList();
                 });
 

@@ -19,7 +19,7 @@ export default function ModalComp(props) {
 
     useEffect(() => {
 
-        console.log('before', form.current);
+        //console.log('before', form.current);
 
         fetch(belongProductsHostApi)
             .then(response=>response.json())
@@ -31,7 +31,7 @@ export default function ModalComp(props) {
         fetch(belongSupplierHostApi)
             .then(response=>response.json())
             .then(suppliers=>{
-                console.log('---suppliers--->', suppliers);
+                //console.log('---suppliers--->', suppliers);
                 setAllSuppliers(suppliers); // get Products for Products select option
             });
 
@@ -44,7 +44,7 @@ export default function ModalComp(props) {
         }
 
         return () => {
-            console.log('after', form.current);
+            //console.log('after', form.current);
         }
 
     }, [stock]);
@@ -93,7 +93,7 @@ export default function ModalComp(props) {
             timer: 1500
         })
 
-        console.log(result);
+        //console.log(result);
 
     };
 
@@ -101,7 +101,7 @@ export default function ModalComp(props) {
 
         event.preventDefault()
 
-        console.log(props.stockData._id);
+        //console.log(props.stockData._id);
 
         const res = await fetch(hostApi+props.stockData._id, {
             body: JSON.stringify({
@@ -130,7 +130,7 @@ export default function ModalComp(props) {
             timer: 1500
         });
 
-        console.log(result);
+        //console.log(result);
 
     };
 
@@ -141,7 +141,7 @@ export default function ModalComp(props) {
         Cookies.set('panelType', panel.panelType)
     }
 
-    console.log('dd');
+    //console.log('dd');
 
     return (
         <>

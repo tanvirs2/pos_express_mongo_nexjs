@@ -17,11 +17,11 @@ export default function Customer() {
     const [customer, setCustomer] = useState('');
 
     useEffect(()=>{
-        console.log(hostApi)
+       //console.log(hostApi)
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setCustomers(data);
             });
     }, []);
@@ -31,7 +31,7 @@ export default function Customer() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setCustomers(data);
             });
 
@@ -63,7 +63,7 @@ export default function Customer() {
                 })
                 .then(res => res.json()) // or res.json()
                 .then(res => {
-                    console.log(res)
+                   //console.log(res)
                     updateCustomerList();
                 });
 

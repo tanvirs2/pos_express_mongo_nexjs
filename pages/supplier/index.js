@@ -17,11 +17,11 @@ export default function Supplier() {
     const [supplier, setSupplier] = useState('');
 
     useEffect(()=>{
-        console.log(hostApi)
+       //console.log(hostApi)
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setSuppliers(data);
             });
     }, []);
@@ -31,7 +31,7 @@ export default function Supplier() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setSuppliers(data);
             });
 
@@ -63,7 +63,7 @@ export default function Supplier() {
                 })
                 .then(res => res.json()) // or res.json()
                 .then(res => {
-                    console.log(res)
+                   //console.log(res)
                     updateCustomerList();
                 });
 

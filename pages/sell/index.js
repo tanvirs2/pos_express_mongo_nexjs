@@ -275,7 +275,7 @@ export default function Sell() {
         collection.each((item) => {
             //console.log(item.sum('quantity'));
             let stObj = {id: item['items'][0].stock, qty: item.sum('quantity')};
-            console.log('->',stObj);
+           //console.log('->',stObj);
         });*/
 
         //console.log(collection, collection['items']['61f6369bf06c0abf945b671a'].sum('quantity'));

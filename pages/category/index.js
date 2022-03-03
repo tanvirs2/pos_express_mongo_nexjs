@@ -19,7 +19,7 @@ export default function Category() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setCategories(data);
             });
     }, [])
@@ -29,7 +29,7 @@ export default function Category() {
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
-                console.log(data);
+               //console.log(data);
                 setCategories(data);
             });
 
@@ -60,7 +60,7 @@ export default function Category() {
                 })
                 .then(res => res.json()) // or res.json()
                 .then(res => {
-                    console.log(res)
+                   //console.log(res)
                     updateCategoryList();
                 });
 
