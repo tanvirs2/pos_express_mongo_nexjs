@@ -137,10 +137,10 @@ export default function Stock() {
                                             </thead>
                                             <tbody>
 
-                                            {stocks.map(stock=>{
+                                            {stocks.map((stock, index)=>{
                                                 return (
                                                     <tr key={stock._id}>
-                                                        <td>0</td>
+                                                        <td>{index+1}</td>
                                                         <td>{stock.supplier.name}</td>
                                                         <td>{stock.product.name}</td>
 

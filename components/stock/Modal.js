@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import Swal from "sweetalert2";
-import {Button, Form, Modal, Nav} from "react-bootstrap";
+import {Button, Col, Form, Modal, Nav, Row} from "react-bootstrap";
 import Cookies from 'js-cookie'
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
@@ -13,7 +13,7 @@ export default function ModalComp(props) {
     const [stock, setStock] = useState('');
     const [products, setProducts] = useState([]);
     const [allSuppliers, setAllSuppliers] = useState([]);
-    const [dynamicInputFields, setDynamicInputFields] = useState([]);
+    const [dynamicInputFields, setDynamicInputFields] = useState([{quantityPurchased: '', unitPrice: '', product: '', selectText: ''}]);
     const [cooKiePanelType, setCooKiePanelType] = useState( Cookies.get('panelType') );
     let form = useRef(null);
 
@@ -59,28 +59,67 @@ export default function ModalComp(props) {
 
         //setStock([]);
 
-        event.preventDefault()
+        if (dynamicInputFields.length === 1) {
 
-        //console.log(form.current.supplier.value);
+        } else {
+
+        }
+
+        event.preventDefault();
+
+        //console.log(dynamicInputFields);
 
         //return;
 
-        const res = await fetch(hostApi, {
-            body: JSON.stringify({
-                name: form.current.name.value,
-                supplier: form.current.supplier.value,
-                description: form.current.description.value,
-                quantityPurchased: form.current.quantityPurchased.value,
-                unitPrice: form.current.unitPrice.value,
-                product: form.current.product.value,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            method: 'POST'
-        })
+        if (Cookies.get('panelType') === 'multi') {
 
-        const result = await res.json()
+            for (let dynamicInputField of dynamicInputFields) {
+
+                //console.log(dynamicInputField);
+                //return;
+
+                const res = await fetch(hostApi, {
+                    body: JSON.stringify({
+                        name: form.current.name.value,
+                        supplier: form.current.supplier.value,
+                        description: form.current.description.value,
+                        
+                        quantityPurchased: dynamicInputField.quantityPurchased,
+                        unitPrice: dynamicInputField.unitPrice,
+                        product: dynamicInputField.product,
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'POST'
+                });
+
+                const result = await res.json();
+
+            }
+
+        } else {
+            const res = await fetch(hostApi, {
+                body: JSON.stringify({
+                    name: form.current.name.value,
+                    supplier: form.current.supplier.value,
+                    description: form.current.description.value,
+                    quantityPurchased: form.current.quantityPurchased.value,
+                    unitPrice: form.current.unitPrice.value,
+                    product: form.current.product.value,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST'
+            });
+
+            const result = await res.json();
+        }
+
+
+
+
 
         props.updateStockList();
         handleClose()
@@ -139,6 +178,35 @@ export default function ModalComp(props) {
         //console.log(Cookies.get('panelTypes'))
         setCooKiePanelType(panel.panelType);
         Cookies.set('panelType', panel.panelType)
+    }
+
+    const handleQuantityPurchasedChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...dynamicInputFields];
+
+        //console.log(dynamicInputFields);
+
+        list[index][name] = value;
+        setDynamicInputFields(list);
+    }
+
+    const handleUnitPriceChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...dynamicInputFields];
+        list[index][name] = value;
+        setDynamicInputFields(list);
+    }
+
+    const handleProductChange = (e, index) => {
+
+        //console.dir(e.target[e.target.selectedIndex].text);
+
+        const { name, value } = e.target;
+        const list = [...dynamicInputFields];
+        //console.log(name, value);
+        list[index][name] = value;
+        list[index]['selectText'] = e.target[e.target.selectedIndex].text;
+        setDynamicInputFields(list);
     }
 
     //console.log('dd');
@@ -228,19 +296,21 @@ export default function ModalComp(props) {
                                     </Form.Select>
                             </Fragment>)
                             :
-                            (<Fragment>
+                            (<div>
 
                                 {/* dynamic */}
 
-                                <Button onClick={()=>{
-                                    setDynamicInputFields([...dynamicInputFields, {}])
-                                }}>Add</Button>
+                                <Button variant="info" onClick={()=>{
+                                    setDynamicInputFields([...dynamicInputFields, {quantityPurchased: '', unitPrice: ''}])
+                                }}>+</Button>
 
                                 {
                                     dynamicInputFields.map((fields, index,thisArray)=>{
 
-                                        return <div key={index}> {index} dd
-                                            <Button onClick={()=>{
+                                        //console.log(fields);
+
+                                        return <div key={index}>
+                                            {/*<Button onClick={()=>{
 
                                                 //console.log(index, thisArray, index)
 
@@ -248,39 +318,102 @@ export default function ModalComp(props) {
 
                                                 setDynamicInputFields([...thisArray])
 
-                                            }}>del</Button>
-                                        </div>
+                                            }}>del</Button>*/}
+
+                                            <Row>
+                                                <Col>
+                                                    <Form.Group className="mb-3">
+                                                        <Form.Label>Product</Form.Label>
+                                                        <Form.Select aria-label="Default select example" name="product" onChange={e=>{
+                                                            handleProductChange(e, index)
+                                                        }
+                                                        }>
+                                                            <option>Open this select menu</option>
+
+                                                            {
+                                                                products.map(product => {
+                                                                    return (
+                                                                        <option key={product._id} value={ (fields.product) ? fields.product : product._id}>
+                                                                            { (fields.selectText) ? fields.selectText : product.name}
+                                                                        </option>
+                                                                    )
+                                                                })
+                                                            }
+
+                                                        </Form.Select>
+                                                    </Form.Group>
+                                                </Col>
+
+                                                <Col>
+                                                    <Form.Group className="mb-3">
+                                                        <Form.Label>Quantity</Form.Label>
+                                                        <Form.Control value={fields.quantityPurchased} onChange={e=>{
+                                                            handleQuantityPurchasedChange(e, index)
+                                                        }
+                                                        } type="number" placeholder="Type Quantity"
+                                                                      name="quantityPurchased"/>
+                                                    </Form.Group>
+
+                                                </Col>
+
+                                                <Col>
+                                                    <Form.Group className="mb-3">
+                                                        <Form.Label>Price</Form.Label>
+                                                        <Form.Control value={fields.unitPrice} onChange={e=>{
+                                                            handleUnitPriceChange(e, index)
+                                                        }
+                                                        } type="number" placeholder="Type Price"
+                                                                      name="unitPrice"/>
+                                                    </Form.Group>
+
+                                                </Col>
+
+                                                {dynamicInputFields.length !== 1 && <Col md={1}>
+                                                    <Form.Group className="mb-3">
+                                                        <Form.Label>Action</Form.Label>
+                                                        <Button className="px-3" variant="danger" onClick={(e) => {
+
+
+                                                                /*const { name, value } = e.target;
+                                                                const list = [...serviceList];
+                                                                list[index][name] = value;
+                                                                setServiceList(list);*/
+
+
+                                                                //thisArray.splice(index, 1);
+
+                                                                //let parentDiv = e.target.parentElement.parentElement.parentElement.parentElement;
+
+                                                                //let prDiv = parentDiv.parentElement
+
+                                                                //parentDiv.remove();
+
+                                                                //console.log(prDiv.childNodes);
+
+                                                                //const list = [...thisArray];
+                                                                //list.splice(index, 1);
+                                                                //setDynamicInputFields(list);
+
+                                                                thisArray.splice(index, 1);
+                                                                setDynamicInputFields([...thisArray])
+                                                            }
+                                                        }
+                                                        >
+                                                            -
+                                                        </Button>
+                                                    </Form.Group>
+                                                </Col>}
+
+
+                                            </Row>
+                                        </div>;
 
                                     })
                                 }
 
                                 {/* dynamic */}
 
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Quantity</Form.Label>
-                                    <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
-                                </Form.Group>
-
-                                <Form.Group className="mb-3">
-                                    <Form.Label>Price</Form.Label>
-                                    <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
-                                </Form.Group>
-
-
-                                <Form.Label>Product</Form.Label>
-                                <Form.Select aria-label="Default select example" name="product">
-                                    <option>Open this select menu</option>
-
-                                    {
-                                        products.map(product=>{
-                                            return (
-                                                <option key={product._id} value={product._id}>{product.name}</option>
-                                            )
-                                        })
-                                    }
-
-                                </Form.Select>
-                            </Fragment>)
+                            </div>)
                         }
 
 
