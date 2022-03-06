@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Stock = require('../models/Stock');
+const SupplierPurchaseOrderModel = require('../models/SupplierPurchaseOrder');
+//const {getNextSequenceValue} = require("../../utilities/functions");
+
+
+//getNextSequenceValue
 
 
 router.get('/', async (req, res) => {
@@ -26,12 +31,41 @@ router.get('/:stockId', async (req, res) => {
 });
 
 // save stock
-router.post('/', (req, res)=>{
+router.post('/', async (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
+    //console.log(req.body);
 
-    const stock = new Stock({
+    //SupplierPurchaseOrderModel {
+    //         customer: req.body[0].customer,
+    //     }
+
+    let supplierPurchaseOrderModel = new SupplierPurchaseOrderModel({
+        supplier: req.body[0].supplier,
+    });
+
+    let supplierPOM = await supplierPurchaseOrderModel.save();
+
+    for (let inputs of req.body) {
+
+        const stock = new Stock({
+            supplierPurchaseOrder: supplierPOM._id,
+            supplier: inputs.supplier,
+            description: inputs.description,
+            quantityPurchased: inputs.quantityPurchased,
+            quantityStock: inputs.quantityPurchased,
+            unitPrice: inputs.unitPrice,
+            product: inputs.product,
+        });
+
+        stock.save().then(data => {
+            console.log(data);
+            res.send(data);
+        })
+    }
+
+    /*const stock = new Stock({
         name: req.body.name,
         supplier: req.body.supplier,
         description: req.body.description,
@@ -44,7 +78,7 @@ router.post('/', (req, res)=>{
     stock.save().then(data => {
         console.log(data);
         res.send(data);
-    })
+    })*/
 
 
 });

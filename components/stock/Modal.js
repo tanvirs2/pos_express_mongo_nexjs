@@ -59,19 +59,46 @@ export default function ModalComp(props) {
 
         //setStock([]);
 
-        if (dynamicInputFields.length === 1) {
-
-        } else {
-
-        }
-
         event.preventDefault();
 
         //console.log(dynamicInputFields);
 
         //return;
 
+        let formObject = [];
+
         if (Cookies.get('panelType') === 'multi') {
+
+            formObject = dynamicInputFields.map(dynamicInputField=>{
+                return {
+                    supplier: form.current.supplier.value,
+                    description: form.current.description.value,
+
+                    quantityPurchased: dynamicInputField.quantityPurchased,
+                    unitPrice: dynamicInputField.unitPrice,
+                    product: dynamicInputField.product,
+                };
+            });
+
+        } else {
+
+            formObject = [
+                {
+                    supplier: form.current.supplier.value,
+                    description: form.current.description.value,
+                    quantityPurchased: form.current.quantityPurchased.value,
+                    unitPrice: form.current.unitPrice.value,
+                    product: form.current.product.value,
+                }
+            ];
+        }
+
+        //console.log(formObject);
+        //return;
+
+
+
+        /*if (Cookies.get('panelType') === 'multi') {
 
             for (let dynamicInputField of dynamicInputFields) {
 
@@ -115,8 +142,17 @@ export default function ModalComp(props) {
             });
 
             const result = await res.json();
-        }
+        }*/
 
+        const res = await fetch(hostApi, {
+            body: JSON.stringify(formObject),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        });
+
+        const result = await res.json();
 
 
 

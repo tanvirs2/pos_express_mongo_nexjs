@@ -7,6 +7,7 @@ const SupplierPurchaseOrder = mongoose.Schema({
         required: false,
         default: 'not set'
     },
+    sequence_value: 0,
     chalanNo: {
         type: String,
         required: true,
