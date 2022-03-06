@@ -83,7 +83,7 @@ export default function ModalComp(props) {
                         name: form.current.name.value,
                         supplier: form.current.supplier.value,
                         description: form.current.description.value,
-                        
+
                         quantityPurchased: dynamicInputField.quantityPurchased,
                         unitPrice: dynamicInputField.unitPrice,
                         product: dynamicInputField.product,
