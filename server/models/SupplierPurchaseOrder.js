@@ -11,7 +11,7 @@ const SupplierPurchaseOrder = mongoose.Schema({
     chalanNo: {
         type: String,
         required: true,
-        default: 'not set'
+        default: 'chalanNo'
     },
     supplier: {
         type: mongoose.SchemaTypes.ObjectId,
