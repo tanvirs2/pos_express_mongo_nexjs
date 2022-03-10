@@ -2,12 +2,15 @@ const mongoose = require('mongoose');
 
 
 const SupplierPurchaseOrder = mongoose.Schema({
+    poId: {
+        type: Number,
+        required: true,
+    },
     name: {
         type: String,
         required: false,
         default: 'not set'
     },
-    sequence_value: 0,
     chalanNo: {
         type: String,
         required: true,

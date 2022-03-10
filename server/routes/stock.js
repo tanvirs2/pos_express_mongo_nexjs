@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Stock = require('../models/Stock');
 const SupplierPurchaseOrderModel = require('../models/SupplierPurchaseOrder');
-const CounterModel = require('../models/Counter');
 const {getNextSequenceValue} = require("../../utilities/functions");
 
 
@@ -33,15 +32,11 @@ router.post('/', async (req, res)=>{
 
     res.setHeader('Content-Type', 'application/json')
 
-    /*let counter = new CounterModel({_id:"supplierPurchaseOrderModel",sequence_value:0})
+    const sequenceValue = await getNextSequenceValue('SupplierPurchaseOrderModel');
 
-    counter.save().then(data => {
-        //console.log(data);
-    })*/
+    //console.log(sequenceValue);
 
-    getNextSequenceValue('supplierPurchaseOrderModel')
-
-    return;
+    //return;
 
     //console.log(req.body);
 
@@ -50,6 +45,7 @@ router.post('/', async (req, res)=>{
     //     }
 
     let supplierPurchaseOrderModel = new SupplierPurchaseOrderModel({
+        poId: sequenceValue,
         supplier: req.body[0].supplier,
     });
 

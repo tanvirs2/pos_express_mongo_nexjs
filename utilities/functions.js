@@ -2,7 +2,9 @@ const CounterModel = require("../server/models/Counter");
 
 async function getNextSequenceValue(sequenceName) {
 
-    let counterFetchedData = await CounterModel.findById(sequenceName).exec();
+    const filter = {_id: sequenceName};
+
+    let counterFetchedData = await CounterModel.findOne(filter).exec();
 
     if (!counterFetchedData) {
 
@@ -11,7 +13,6 @@ async function getNextSequenceValue(sequenceName) {
         await counterModel.save();
     }
 
-    const filter = {_id: sequenceName};
     const update = {$inc: {sequence_value: 1}};
 
     let sequenceDocument = await CounterModel.findOneAndUpdate(filter, update, {
