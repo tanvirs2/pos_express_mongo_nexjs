@@ -10,6 +10,7 @@ function ChildTR(props) {
     //console.log(itemRow);
 
     const [inpPrice, setInpPrice] = useState(itemRow.product.price);
+    const [inpPound, setInpPound] = useState(0);
     const [inpQuantity, setInpQuantity] = useState(1);
 
     useEffect(()=>{
@@ -32,13 +33,23 @@ function ChildTR(props) {
     }
 
     const handlePriceChange = (e) => {
-        //console.log(e.target.value);
+        //console.log('handlePriceChange', e.target.value);
         sellingSummeryProcessFunc()
 
         //contextObject.sellFormikForm.handleChange(e); //from context object
 
         let price = e.target.value;
         setInpPrice(price)
+    }
+
+    const handlePoundChange = (e) => {
+        //console.log('handlePoundChange', e.target.value);
+        sellingSummeryProcessFunc()
+
+        //contextObject.sellFormikForm.handleChange(e); //from context object
+
+        let pound = e.target.value;
+        setInpPound(pound)
     }
 
 
@@ -77,6 +88,9 @@ function ChildTR(props) {
 
             </td>
             <td>
+                <input type="text" name="pound" value={inpPound} onChange={handlePoundChange} className="form-control pos_unit_price input_number"/>
+            </td>
+            <td>
                 <input type="text" name="prices" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td className="text-center v-center">
@@ -111,7 +125,12 @@ export function POSRow(props){
                         B.Stock
                     </th>
                     <th className="text-center col-md-3">
-                        Quantity
+                        Roll Qty
+                    </th>
+                    <th className="text-center col-md-2 ">
+                        Amount
+                        <br/>
+                        (Pound)
                     </th>
                     <th className="text-center col-md-2 ">
                         Unit Price
@@ -119,7 +138,8 @@ export function POSRow(props){
                     <th className="text-center col-md-2">
                         Subtotal
                     </th>
-                    <th className="text-center"><i className="fa fa-close" />
+                    <th className="text-center">
+                        x
                     </th>
                 </tr>
                 </thead>

@@ -22,6 +22,10 @@ const RexineStockSchema = mongoose.Schema({
         type: Number,
         required: false
     },
+    amountPurchased: {
+        type: Number,
+        required: false
+    },
     quantityStock: {
         type: Number,
         required: false

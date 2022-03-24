@@ -132,6 +132,11 @@ export default function Stock() {
                                                 <th>Product</th>
                                                 <th>UnPrice</th>
                                                 <th>Quantity</th>
+                                                <th>
+                                                    Amount
+                                                    <br/>
+                                                    (Pound)
+                                                </th>
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
@@ -146,6 +151,7 @@ export default function Stock() {
 
                                                         <td>{stock.unitPrice}</td>
                                                         <td>{stock.quantityPurchased ? <span className="text-danger">({stock.quantityPurchased})</span>: ''}</td>
+                                                        <td>{stock.amountPurchased ? <span className="text-danger">({stock.amountPurchased})</span>: ''}</td>
 
                                                         <td>
                                                         <span className="">

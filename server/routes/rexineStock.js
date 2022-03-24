@@ -30,22 +30,14 @@ router.get('/:ownModelId', async (req, res) => {
 
 });
 
-// save ownModel
+// save RexineStock
 router.post('/', async (req, res)=>{
+
 
     res.setHeader('Content-Type', 'application/json')
 
-    const sequenceValue = await getNextSequenceValue('SupplierPurchaseOrderModel');
+    const sequenceValue = await getNextSequenceValue('SupplierRexinePurchaseOrderModel');
 
-    //console.log(sequenceValue);
-
-    //return;
-
-    //console.log(req.body);
-
-    //SupplierPurchaseOrderModel {
-    //         customer: req.body[0].customer,
-    //     }
 
     let supplierPurchaseOrderModel = new SupplierPurchaseOrderModel({
         poId: sequenceValue,
@@ -54,7 +46,11 @@ router.post('/', async (req, res)=>{
 
     let supplierPOM = await supplierPurchaseOrderModel.save();
 
+    //console.log('body---->', req.body);
+
     for (let inputs of req.body) {
+
+        //console.log(inputs);
 
         const ownModel = new OwnModel({
             supplierPurchaseOrder: supplierPOM._id,
@@ -62,12 +58,13 @@ router.post('/', async (req, res)=>{
             description: inputs.description,
             quantityPurchased: inputs.quantityPurchased,
             quantityStock: inputs.quantityPurchased,
+            amountPurchased: inputs.amountPurchased,
             unitPrice: inputs.unitPrice,
             product: inputs.product,
         });
 
         ownModel.save().then(data => {
-            console.log(data);
+            //console.log(data);
             res.send(data);
         })
     }

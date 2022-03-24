@@ -1,7 +1,7 @@
-import {Col, Container, Form, Modal, Button, Row, ListGroup, Badge, Alert} from "react-bootstrap";
+import {Col, Container, Form, Button, Row, ListGroup, Badge, Alert} from "react-bootstrap";
 import Swal from 'sweetalert2'
-import React, {useState, useEffect, createContext, useRef} from "react";
-import Router from "next/router";
+import React, {useState, useEffect, useRef} from "react";
+
 import AsyncSelect from 'react-select/async';
 import Select from "react-select";
 import { useFormik } from 'formik';
@@ -9,21 +9,21 @@ import collect from "collect.js";
 
 import appLanguage from '../../utilities/language'
 
-import ModalComp from '../../components/sell/Modal';
-import {sellingSummeryProcessFunc} from '../../components/sell/sellFunctionality';
-import {POSRow} from '../../components/sell/POSRow';
-import ProductThumbnail from '../../components/sell/ProductThumbnail';
-import PaymentFooter from '../../components/sell/PaymentFooter';
+import {sellingSummeryProcessFunc} from '../../components/rexineSell/sellFunctionality';
+import {POSRow} from '../../components/rexineSell/POSRow';
+import ProductThumbnail from '../../components/rexineSell/ProductThumbnail';
+import PaymentFooter from '../../components/rexineSell/PaymentFooter';
 
-import {SubmitContext} from "../../components/sell/context/context";
+import {SubmitContext} from "../../components/rexineSell/context/context";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/rexine-sell/';
-const hostApiPurchaseOrder = host+'/purchaseOrder/';
 const hostApiStock = host+'/rexine-stock/';
+const hostApiPurchaseOrder = host+'/purchaseOrder/';
 const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
 const hostApiCustomerTransaction = host+'/customerTransaction/';
+const todayInformation = host+'/day-by-day-information/';
 
 
 
@@ -307,6 +307,18 @@ export default function Sell() {
         //console.log('---->',sellDone);
     }
 
+    let handleTodayPriceInformation = event => {
+        //console.log(event);
+        //todayInformation
+        if (event.key === 'Enter') {
+
+            //fetch(todayInformation)
+
+            setTodayPrice(event.target.value)
+            setShowTodayPrice(false);
+        }
+    }
+
 
     return (
         <>
@@ -328,12 +340,6 @@ export default function Sell() {
                                         <h6 className="title">{moduleLang.todaySells}</h6>
                                     </header>
 
-                                    {/*<div className="filter-content">
-                                        <div className="list-group list-group-flush">
-                                            <span className="list-group-item mouse-pointer-cursor" onClick={handleShow}>Create sell </span>
-                                        </div>
-                                    </div>*/}
-
                                     <ListGroup as="ol" numbered>
 
                                         {purchaseOrders.map(purchaseOrder => {
@@ -354,24 +360,6 @@ export default function Sell() {
                                                         14
                                                     </Badge>
                                                 </ListGroup.Item>
-                                                /*<div key={sell._id} >
-                                                    <div className="d-flex justify-content-between list-group-item">
-                                                        <a href="#" className="">
-                                                            {sell.name}
-                                                        </a>
-                                                        <span className="">
-
-                                                                <Button variant={"success"} className="mx-1" onClick={()=>{
-                                                                    handleShow(sell)
-                                                                }}>Edit</Button>
-
-                                                                <Button variant={"danger"} onClick={()=>{
-                                                                    handleDeleteSell(sell._id)
-                                                                }}>Delete</Button>
-                                                            </span>
-                                                    </div>
-                                                </div>*/
-
                                             )
                                         })}
 
@@ -391,13 +379,10 @@ export default function Sell() {
                             <Alert variant="danger" >
                                 <Alert.Heading>Today Price - {todayPrice}</Alert.Heading>
                                 {
-                                    showTodayPrice ? <input type="text" onKeyUp={event => {
-                                        //console.log(event);
-                                        if (event.key === 'Enter') {
-                                            setTodayPrice(event.target.value)
-                                            setShowTodayPrice(false);
-                                        }
-                                    }}/> : <Button onClick={()=>setShowTodayPrice(true)}>Set New Price</Button>
+                                    showTodayPrice ?
+                                        <input type="text" className="form-control" style={{width: "10vw"}} onKeyUp={handleTodayPriceInformation}/>
+                                        :
+                                        <Button onClick={()=>setShowTodayPrice(true)}>Set New Price</Button>
                                 }
 
                             </Alert>

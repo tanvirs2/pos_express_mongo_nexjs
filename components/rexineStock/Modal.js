@@ -13,7 +13,7 @@ export default function ModalComp(props) {
     const [stock, setStock] = useState('');
     const [products, setProducts] = useState([]);
     const [allSuppliers, setAllSuppliers] = useState([]);
-    const [dynamicInputFields, setDynamicInputFields] = useState([{quantityPurchased: '', unitPrice: '', product: '', selectText: ''}]);
+    const [dynamicInputFields, setDynamicInputFields] = useState([{quantityPurchased: '', unitPrice: '', product: '', selectText: '', amountPurchased: ''}]);
     const [cooKiePanelType, setCooKiePanelType] = useState( Cookies.get('panelType') );
     let form = useRef(null);
 
@@ -75,6 +75,7 @@ export default function ModalComp(props) {
                     description: form.current.description.value,
 
                     quantityPurchased: dynamicInputField.quantityPurchased,
+                    amountPurchased: dynamicInputField.amountPurchased,
                     unitPrice: dynamicInputField.unitPrice,
                     product: dynamicInputField.product,
                 };
@@ -87,6 +88,7 @@ export default function ModalComp(props) {
                     supplier: form.current.supplier.value,
                     description: form.current.description.value,
                     quantityPurchased: form.current.quantityPurchased.value,
+                    amountPurchased: form.current.amountPurchased.value,
                     unitPrice: form.current.unitPrice.value,
                     product: form.current.product.value,
                 }
@@ -137,6 +139,7 @@ export default function ModalComp(props) {
                 supplier: form.current.supplier.value,
                 description: form.current.description.value,
                 quantityPurchased: form.current.quantityPurchased.value,
+                amountPurchased: form.current.amountPurchased.value,
                 unitPrice: form.current.unitPrice.value,
             }),
             headers: {
@@ -179,6 +182,16 @@ export default function ModalComp(props) {
         setDynamicInputFields(list);
     }
 
+    const handleAmountPurchasedChange = (e, index) => {
+        const { name, value } = e.target;
+        const list = [...dynamicInputFields];
+
+        //console.log(dynamicInputFields);
+
+        list[index][name] = value;
+        setDynamicInputFields(list);
+    }
+
     const handleUnitPriceChange = (e, index) => {
         const { name, value } = e.target;
         const list = [...dynamicInputFields];
@@ -212,6 +225,7 @@ export default function ModalComp(props) {
                        form.current.supplier.value = (props.stockData.supplier) ? props.stockData.supplier : '';
                        form.current.description.value = (props.stockData.description) ? props.stockData.description : '';
                        form.current.quantityPurchased.value = (props.stockData.quantityPurchased) ? props.stockData.quantityPurchased : '';
+                       form.current.amountPurchased.value = (props.stockData.amountPurchased) ? props.stockData.amountPurchased : '';
                        form.current.unitPrice.value = (props.stockData.unitPrice) ? props.stockData.unitPrice : '';
 
                    }}
@@ -264,6 +278,11 @@ export default function ModalComp(props) {
                                         <Form.Control type="number" placeholder="Type Quantity" name="quantityPurchased"/>
                                     </Form.Group>
 
+                                   <Form.Group className="mb-3">
+                                        <Form.Label>Amount</Form.Label>
+                                        <Form.Control type="number" placeholder="Type Amount" name="amountPurchased"/>
+                                    </Form.Group>
+
                                     <Form.Group className="mb-3">
                                         <Form.Label>Price</Form.Label>
                                         <Form.Control type="number" placeholder="Type Price" name="unitPrice"/>
@@ -290,7 +309,7 @@ export default function ModalComp(props) {
                                 {/* dynamic */}
 
                                 <Button variant="info" onClick={()=>{
-                                    setDynamicInputFields([...dynamicInputFields, {quantityPurchased: '', unitPrice: ''}])
+                                    setDynamicInputFields([...dynamicInputFields, {quantityPurchased: '', unitPrice: '', amountPurchased: ''}])
                                 }}>+</Button>
 
                                 {
@@ -299,15 +318,7 @@ export default function ModalComp(props) {
                                         //console.log(fields);
 
                                         return <div key={index}>
-                                            {/*<Button onClick={()=>{
 
-                                                //console.log(index, thisArray, index)
-
-                                                thisArray.splice(index, 1)
-
-                                                setDynamicInputFields([...thisArray])
-
-                                            }}>del</Button>*/}
 
                                             <Row>
                                                 <Col>
@@ -347,6 +358,17 @@ export default function ModalComp(props) {
 
                                                 <Col>
                                                     <Form.Group className="mb-3">
+                                                        <Form.Label>Amount</Form.Label>
+                                                        <Form.Control value={fields.amountPurchased} onChange={e=>{
+                                                            handleAmountPurchasedChange(e, index)
+                                                        }
+                                                        } type="number" placeholder="Type Amount" name="amountPurchased"/>
+                                                    </Form.Group>
+
+                                                </Col>
+
+                                                <Col>
+                                                    <Form.Group className="mb-3">
                                                         <Form.Label>Price</Form.Label>
                                                         <Form.Control value={fields.unitPrice} onChange={e=>{
                                                             handleUnitPriceChange(e, index)
@@ -362,26 +384,6 @@ export default function ModalComp(props) {
                                                         <Form.Label>Action</Form.Label>
                                                         <Button className="px-3" variant="danger" onClick={(e) => {
 
-
-                                                                /*const { name, value } = e.target;
-                                                                const list = [...serviceList];
-                                                                list[index][name] = value;
-                                                                setServiceList(list);*/
-
-
-                                                                //thisArray.splice(index, 1);
-
-                                                                //let parentDiv = e.target.parentElement.parentElement.parentElement.parentElement;
-
-                                                                //let prDiv = parentDiv.parentElement
-
-                                                                //parentDiv.remove();
-
-                                                                //console.log(prDiv.childNodes);
-
-                                                                //const list = [...thisArray];
-                                                                //list.splice(index, 1);
-                                                                //setDynamicInputFields(list);
 
                                                                 thisArray.splice(index, 1);
                                                                 setDynamicInputFields([...thisArray])
