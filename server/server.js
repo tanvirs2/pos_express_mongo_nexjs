@@ -5,9 +5,15 @@ const bodyParser = require('body-parser')
 
 const routeList = require('./routeUrls/routesUrls');
 
-const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
+
+//console.log('process.env.PORT--->',dev)
+
 const app = next({ dev })
+const port = parseInt(process.env.PORT, 10) || 3000
+
+//app.set('port', 3006);
+
 const handle = app.getRequestHandler()
 
 app.prepare().then(() => {

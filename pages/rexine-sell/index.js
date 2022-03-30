@@ -24,6 +24,7 @@ const hostApiCustomer = host+'/customer/';
 const hostApiProduct = host+'/products/';
 const hostApiCustomerTransaction = host+'/customerTransaction/';
 const todayInformation = host+'/day-by-day-information/';
+const todayInformationLatestOne = host+'/day-by-day-information/latest-one';
 
 
 
@@ -79,6 +80,9 @@ export default function Sell() {
     }, [itemRow, refreshPage])
 
     useEffect(()=>{
+
+        getTodayPriceFromDB();
+
         fetch(hostApi)
             .then(response=>response.json())
             .then(data=>{
@@ -112,6 +116,16 @@ export default function Sell() {
 
 
     }, [refreshPage]);
+
+    const getTodayPriceFromDB = () => {
+      //todayInformationLatestOne
+        fetch(todayInformationLatestOne)
+            .then(response=> response.json())
+            .then(datas=>{
+                setTodayPrice(datas.todayPrice)
+                //console.log('todayInformationLatestOne---', datas)
+            });
+    }
 
     const handleClose = () => setShow(false);
 
@@ -312,7 +326,17 @@ export default function Sell() {
         //todayInformation
         if (event.key === 'Enter') {
 
-            //fetch(todayInformation)
+            fetch(todayInformation, {
+                body: JSON.stringify({
+                    todayPrice: event.target.value
+                }),
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                method: "POST"
+            })
+                .then(response => response.json())
+                .then(res=>console.log(res));
 
             setTodayPrice(event.target.value)
             setShowTodayPrice(false);

@@ -5,6 +5,17 @@ const DayByDayInformation = require('../models/DayByDayInformation');
 const OwnModel = DayByDayInformation;
 
 
+router.get('/latest-one', async (req, res) => {
+
+    try {
+        const ownModel = await OwnModel.find().limit(1).sort({_id: -1});
+        res.json(ownModel[0]);
+    } catch (err) {
+        res.json({massage: err});
+    }
+
+});
+
 router.get('/', async (req, res) => {
 
     try {
@@ -36,12 +47,11 @@ router.post('/', (req, res)=>{
     //console.log(req.body);
 
     const ownModel = new OwnModel({
-        name: req.body.name,
-        description: req.body.description
+        todayPrice: req.body.todayPrice,
     });
 
     ownModel.save().then(data => {
-        console.log(data);
+        //console.log("day by--->", data);
         res.send(data);
     })
 
