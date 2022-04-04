@@ -1,7 +1,7 @@
 import React, {Fragment, useContext, useEffect, useState} from "react";
 import {sellingSummeryProcessFunc} from "./sellFunctionality";
 import {RiCloseCircleFill} from "react-icons/ri";
-import {SubmitContext} from "./context/context";
+import {PoundCalculatingContext} from "./context/context";
 
 function ChildTR(props) {
 
@@ -12,6 +12,7 @@ function ChildTR(props) {
     const [inpPrice, setInpPrice] = useState(itemRow.product.price);
     const [inpPound, setInpPound] = useState(0);
     const [inpQuantity, setInpQuantity] = useState(1);
+    //const [inpQuantity, setInpQuantity] = useState(1);
 
     useEffect(()=>{
 
@@ -19,7 +20,7 @@ function ChildTR(props) {
 
     }, [inpQuantity, inpPrice]);
 
-    let contextObject = useContext(SubmitContext) //sellFormikForm
+    let contextObject = useContext(PoundCalculatingContext) //
 
 
     const closeThisRow = (index) => {
@@ -39,11 +40,34 @@ function ChildTR(props) {
         //contextObject.sellFormikForm.handleChange(e); //from context object
 
         let price = e.target.value;
-        setInpPrice(price)
+        //setInpPrice(price)
     }
 
     const handlePoundChange = (e) => {
-        //console.log('handlePoundChange', e.target.value);
+
+        let poundValue = e.target.value;
+
+        let priceWithEveryOunch = (parseInt(poundValue) * 16);
+
+        let onlyDecimalValue = (poundValue + "").split(".")[1];
+
+
+        let sumForPoundResult = 0;
+
+
+        if (onlyDecimalValue) {
+            sumForPoundResult = priceWithEveryOunch + parseInt(onlyDecimalValue);
+        } else {
+            sumForPoundResult = priceWithEveryOunch;
+        }
+
+        //console.log('handlePoundChange',  sumForPoundResult * contextObject.oneOunchPriceFromContext);
+        setInpPrice(sumForPoundResult * contextObject.oneOunchPriceFromContext);
+
+        //contextObject
+        //todayPriceFromContext
+        //oneOunchPriceFromContext
+
         sellingSummeryProcessFunc()
 
         //contextObject.sellFormikForm.handleChange(e); //from context object
@@ -91,7 +115,7 @@ function ChildTR(props) {
                 <input type="text" name="pound" value={inpPound} onChange={handlePoundChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td>
-                <input type="text" name="prices" value={inpPrice} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
+                <input type="text" name="prices" value={contextObject.todayPriceFromContext} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td className="text-center v-center">
                 ৳<span className="display_currency pos_line_total_text "> { inpQuantity * inpPrice }</span>

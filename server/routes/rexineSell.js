@@ -88,6 +88,7 @@ router.post('/', async (req, res)=>{
             product: sellData.product,
             quantity: sellData.quantity,
             payment: sellData.price,
+            poundAmount: sellData.pound,
             //description: req.body.description
         });
 

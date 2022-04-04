@@ -14,7 +14,7 @@ import {POSRow} from '../../components/rexineSell/POSRow';
 import ProductThumbnail from '../../components/rexineSell/ProductThumbnail';
 import PaymentFooter from '../../components/rexineSell/PaymentFooter';
 
-import {SubmitContext} from "../../components/rexineSell/context/context";
+import {PoundCalculatingContext} from "../../components/rexineSell/context/context";
 
 const host = process.env.NEXT_PUBLIC_HOSTNAME;
 const hostApi = host+'/rexine-sell/';
@@ -47,6 +47,7 @@ export default function Sell() {
     const [show, setShow] = useState(false);
     const [showTodayPrice, setShowTodayPrice] = useState(true);
     const [todayPrice, setTodayPrice] = useState(0);
+    const [oneOunchPrice, setOneOunchPrice] = useState(0);
     const [sells, setSells] = useState([]);
     const [sell, setSell] = useState('');
 
@@ -123,6 +124,8 @@ export default function Sell() {
             .then(response=> response.json())
             .then(datas=>{
                 setTodayPrice(datas.todayPrice)
+                setOneOunchPrice(datas.todayPrice / 16)
+                setShowTodayPrice(false);
                 //console.log('todayInformationLatestOne---', datas)
             });
     }
@@ -217,17 +220,16 @@ export default function Sell() {
     }
 
     let contextObject = {
-        handleSubmitButton: (e) => {
-            e.preventDefault();
-        },
-        sellFormikForm
+        todayPriceFromContext: todayPrice,
+        oneOunchPriceFromContext: oneOunchPrice,
     };
 
     async function handleSellSubmitButton(e) {
         //let sellFormElm = sellForm.current;
         let sellFormRow = e.target;
-        //console.log(sellFormRow.quantities, sellFormRow.prices);
+        //console.log(sellFormRow.pound, sellFormRow.prices);
         //console.log(sellFormRow.quantities.constructor.name)
+
 
         //sellFormRow.payment.value
 
@@ -235,18 +237,21 @@ export default function Sell() {
         let pricesRow = [];
         let productsRow = [];
         let stockRow = [];
+        let poundAmountRow = [];
         let stockQtyRow = [];//stockQty
 
         if (sellFormRow.quantities) {
             if (sellFormRow.quantities.constructor.name === 'RadioNodeList') {
                 quantityRow = [...sellFormRow.quantities];
                 pricesRow = [...sellFormRow.prices];
+                poundAmountRow = [...sellFormRow.pound];
                 productsRow = [...sellFormRow.products];
                 stockRow = [...sellFormRow.stock];
                 stockQtyRow = [...sellFormRow.stockQty];
             } else {
                 quantityRow = [sellFormRow.quantities];
                 pricesRow = [sellFormRow.prices];
+                poundAmountRow = [sellFormRow.pound];
                 productsRow = [sellFormRow.products];
                 stockRow = [sellFormRow.stock];
                 stockQtyRow = [sellFormRow.stockQty];
@@ -268,6 +273,7 @@ export default function Sell() {
         let bodyData = quantityRow.map((data, index)=>{
 
             let prices = pricesRow[index].value
+            let pounds = poundAmountRow[index].value
             let products = productsRow[index].value
             let quantities = data.value
             let stocks = stockRow[index].value
@@ -280,6 +286,7 @@ export default function Sell() {
                 product: products,
                 quantity: quantities,
                 price: prices,
+                pound: pounds,
                 stock: stocks,
                 stockQty: Number(stockQtys)
             };
@@ -297,6 +304,8 @@ export default function Sell() {
         //console.log(collection, collection['items']['61f6369bf06c0abf945b671a'].sum('quantity'));
 
         //console.log((bodyData))
+
+        //return 0;
 
         let sellDone = await fetch(hostApi, {
             method: "POST",
@@ -339,6 +348,7 @@ export default function Sell() {
                 .then(res=>console.log(res));
 
             setTodayPrice(event.target.value)
+            setOneOunchPrice(event.target.value / 16)
             setShowTodayPrice(false);
         }
     }
@@ -348,7 +358,7 @@ export default function Sell() {
         <>
             {/*<ModalComp modalShowOrNot={show} handleClose={handleClose} catagoryData={sell}/>*/}
 
-            <SubmitContext.Provider value={contextObject}>
+            <PoundCalculatingContext.Provider value={contextObject}>
                 <Container fluid>
                     <Row>
                         <Col>
@@ -401,7 +411,7 @@ export default function Sell() {
                         <Col>
 
                             <Alert variant="danger" >
-                                <Alert.Heading>Today Price - {todayPrice}</Alert.Heading>
+                                <Alert.Heading>Today Price - {todayPrice} ( One ounch - {oneOunchPrice} )</Alert.Heading>
                                 {
                                     showTodayPrice ?
                                         <input type="text" className="form-control" style={{width: "10vw"}} onKeyUp={handleTodayPriceInformation}/>
@@ -609,7 +619,7 @@ export default function Sell() {
 
 
                 </Container>
-            </SubmitContext.Provider>
+            </PoundCalculatingContext.Provider>
 
         </>
     );

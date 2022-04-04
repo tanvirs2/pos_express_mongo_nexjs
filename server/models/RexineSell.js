@@ -25,6 +25,9 @@ const RexineSellSchema = mongoose.Schema({
     quantity: {
         type: Number,
     },
+    poundAmount: {
+        type: Number,
+    },
     date: {
         type: Date,
         default: Date.now()
