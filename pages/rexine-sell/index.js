@@ -410,16 +410,31 @@ export default function Sell() {
 
                         <Col>
 
-                            <Alert variant="danger" >
-                                <Alert.Heading>Today Price - {todayPrice} ( One ounch - {oneOunchPrice} )</Alert.Heading>
-                                {
-                                    showTodayPrice ?
-                                        <input type="text" className="form-control" style={{width: "10vw"}} onKeyUp={handleTodayPriceInformation}/>
-                                        :
-                                        <Button onClick={()=>setShowTodayPrice(true)}>Set New Price</Button>
-                                }
+                            <Row>
+                                <Col>
+                                    <Alert variant="danger" >
+                                        {
+                                            showTodayPrice ?
+                                                <input type="text" className="form-control" style={{width: "100%"}} placeholder="Set today price" onKeyUp={handleTodayPriceInformation}/>
+                                                :
+                                                <Button style={{width: "100%"}} variant="danger" onClick={()=>setShowTodayPrice(true)}>Set New Price</Button>
+                                        }
 
-                            </Alert>
+                                    </Alert>
+
+                                </Col>
+                                <Col>
+                                    <Alert variant="dark" >
+                                        <Alert.Heading>Today Price - {todayPrice} </Alert.Heading>
+                                    </Alert>
+                                </Col>
+                                <Col>
+                                    <Alert variant="info" >
+                                        <Alert.Heading>One ounch - {oneOunchPrice} </Alert.Heading>
+                                    </Alert>
+                                </Col>
+                            </Row>
+
 
                             <div className="card" style={{minHeight: '75vh'}}>
                                 <article className="card-group-item">

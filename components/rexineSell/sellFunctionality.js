@@ -1,5 +1,4 @@
-import React, {forwardRef, useState} from "react";
-import {Col} from "react-bootstrap";
+
 
 export function sellingSummeryProcessFunc() {
     let product_rows = document.querySelectorAll('.product_row');

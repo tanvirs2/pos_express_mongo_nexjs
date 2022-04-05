@@ -5,12 +5,15 @@ import {PoundCalculatingContext} from "./context/context";
 
 function ChildTR(props) {
 
+    let contextObject = useContext(PoundCalculatingContext) //
+
+
     let itemRow = props.itemRow;
 
-    //console.log(itemRow);
+    //console.log('---------',itemRow);
 
-    const [inpPrice, setInpPrice] = useState(itemRow.product.price);
-    const [inpPound, setInpPound] = useState(0);
+    const [inpPrice, setInpPrice] = useState(contextObject.todayPriceFromContext);
+    const [inpPound, setInpPound] = useState(1);
     const [inpQuantity, setInpQuantity] = useState(1);
     //const [inpQuantity, setInpQuantity] = useState(1);
 
@@ -18,9 +21,8 @@ function ChildTR(props) {
 
         sellingSummeryProcessFunc();
 
-    }, [inpQuantity, inpPrice]);
+    }, [inpQuantity, inpPrice, inpPound]);
 
-    let contextObject = useContext(PoundCalculatingContext) //
 
 
     const closeThisRow = (index) => {
@@ -43,9 +45,8 @@ function ChildTR(props) {
         //setInpPrice(price)
     }
 
-    const handlePoundChange = (e) => {
-
-        let poundValue = e.target.value;
+    const handlePoundFunctionality = (poundValue) => {
+        //let poundValue = e.target.value;
 
         let priceWithEveryOunch = (parseInt(poundValue) * 16);
 
@@ -67,6 +68,11 @@ function ChildTR(props) {
         //contextObject
         //todayPriceFromContext
         //oneOunchPriceFromContext
+    }
+
+    const handlePoundChange = (e) => {
+
+        handlePoundFunctionality(e.target.value);
 
         sellingSummeryProcessFunc()
 
@@ -118,7 +124,7 @@ function ChildTR(props) {
                 <input type="text" name="prices" value={contextObject.todayPriceFromContext} onChange={handlePriceChange} className="form-control pos_unit_price input_number"/>
             </td>
             <td className="text-center v-center">
-                ৳<span className="display_currency pos_line_total_text "> { inpQuantity * inpPrice }</span>
+                ৳<span className="display_currency pos_line_total_text "> { inpPrice }</span>
             </td>
             <td className="text-center">
                 <RiCloseCircleFill color="FireBrick" onClick={()=>{
