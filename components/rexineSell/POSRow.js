@@ -21,7 +21,11 @@ function ChildTR(props) {
 
         sellingSummeryProcessFunc();
 
-    }, [inpQuantity, inpPrice, inpPound]);
+        handlePoundFunctionality(inpPound);
+
+        //console.log('---------');
+
+    }, [inpQuantity, inpPound, contextObject.todayPriceFromContext]);
 
 
 

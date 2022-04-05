@@ -345,7 +345,7 @@ export default function Sell() {
                 method: "POST"
             })
                 .then(response => response.json())
-                .then(res=>console.log(res));
+                //.then(res=>console.log(res));
 
             setTodayPrice(event.target.value)
             setOneOunchPrice(event.target.value / 16)
