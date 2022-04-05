@@ -335,9 +335,15 @@ export default function Sell() {
         //todayInformation
         if (event.key === 'Enter') {
 
+            let priceVal = event.target.value;
+            priceVal = priceVal ? priceVal : 1;
+            //console.log(priceVal);
+
+            //return 0;
+
             fetch(todayInformation, {
                 body: JSON.stringify({
-                    todayPrice: event.target.value
+                    todayPrice: priceVal
                 }),
                 headers: {
                     "Content-Type": "application/json"
@@ -347,8 +353,8 @@ export default function Sell() {
                 .then(response => response.json())
                 //.then(res=>console.log(res));
 
-            setTodayPrice(event.target.value)
-            setOneOunchPrice(event.target.value / 16)
+            setTodayPrice(priceVal)
+            setOneOunchPrice(priceVal / 16)
             setShowTodayPrice(false);
         }
     }
@@ -425,12 +431,12 @@ export default function Sell() {
                                 </Col>
                                 <Col>
                                     <Alert variant="dark" >
-                                        <Alert.Heading>Today Price - {todayPrice} </Alert.Heading>
+                                        <Alert.Heading>Today: <span className="text-danger">{todayPrice}</span>tk </Alert.Heading>
                                     </Alert>
                                 </Col>
                                 <Col>
                                     <Alert variant="info" >
-                                        <Alert.Heading>One ounch - {oneOunchPrice} </Alert.Heading>
+                                        <Alert.Heading>ounch: <span className="text-danger">{oneOunchPrice}</span>tk </Alert.Heading>
                                     </Alert>
                                 </Col>
                             </Row>
